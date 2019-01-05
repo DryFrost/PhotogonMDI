@@ -1,13 +1,5 @@
 #include "detectcolorchips.h"
 
-#define MACBETH_WIDTH   6
-#define MACBETH_HEIGHT  4
-#define MACBETH_SQUARES MACBETH_WIDTH * MACBETH_HEIGHT
-
-#define MAX_CONTOUR_APPROX  7
-
-#define MAX_RGB_DISTANCE 444
-
 CvScalar colorchecker_srgb[MACBETH_HEIGHT][MACBETH_WIDTH] =
 {
     {
