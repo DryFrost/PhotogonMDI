@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>800</width>
+    <height>600</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Main Window</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QVBoxLayout" name="verticalLayout">
+    <item>
+     <widget class="QMdiArea" name="mdiArea">
+      <property name="verticalScrollBarPolicy">
+       <enum>Qt::ScrollBarAsNeeded</enum>
+      </property>
+      <property name="horizontalScrollBarPolicy">
+       <enum>Qt::ScrollBarAsNeeded</enum>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>800</width>
+     <height>22</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuFile">
+    <property name="title">
+     <string>File</string>
+    </property>
+    <addaction name="actionNew_Project"/>
+    <addaction name="actionOpen_Project"/>
+   </widget>
+   <widget class="QMenu" name="menuView">
+    <property name="title">
+     <string>View</string>
+    </property>
+    <addaction name="actionDisplay_Front_Camera"/>
+    <addaction name="actionDisplay_Side_Camera"/>
+    <addaction name="actionDisplay_Top_Camera"/>
+    <addaction name="actionDisplay_Shapes"/>
+    <addaction name="actionDisplay_Histograms"/>
+    <addaction name="actionDisplay_Masks"/>
+   </widget>
+   <widget class="QMenu" name="menuProperties">
+    <property name="title">
+     <string>Properties</string>
+    </property>
+    <addaction name="actionModify_Region_of_Intrest"/>
+    <addaction name="actionModify_Mask_Properties"/>
+   </widget>
+   <addaction name="menuFile"/>
+   <addaction name="menuView"/>
+   <addaction name="menuProperties"/>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+  <widget class="QToolBar" name="toolBar">
+   <property name="windowTitle">
+    <string>toolBar</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>LeftToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="actionNew_Project"/>
+   <addaction name="actionOpen_Project"/>
+   <addaction name="actionActivate_Cameras"/>
+   <addaction name="actionOpen_Camera"/>
+  </widget>
+  <widget class="QToolBar" name="toolBar_2">
+   <property name="windowTitle">
+    <string>toolBar_2</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="actionDisplay_Front_Camera"/>
+   <addaction name="actionDisplay_Side_Camera"/>
+   <addaction name="actionDisplay_Top_Camera"/>
+   <addaction name="actionDisplay_Masks"/>
+   <addaction name="actionDisplay_Shapes"/>
+   <addaction name="actionDisplay_Histograms"/>
+  </widget>
+  <action name="actionNew_Project">
+   <property name="text">
+    <string>New Project</string>
+   </property>
+   <property name="shortcut">
+    <string>Meta+N</string>
+   </property>
+  </action>
+  <action name="actionOpen_Project">
+   <property name="icon">
+    <iconset>
+     <normaloff>:/icons/Images/fileopen.svg</normaloff>:/icons/Images/fileopen.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Open Project</string>
+   </property>
+   <property name="shortcut">
+    <string>Meta+O</string>
+   </property>
+  </action>
+  <action name="actionOpen_Camera">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Capture Plants</string>
+   </property>
+   <property name="shortcut">
+    <string>Meta+C</string>
+   </property>
+  </action>
+  <action name="actionDisplay_Front_Camera">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Display Front Camera</string>
+   </property>
+  </action>
+  <action name="actionDisplay_Side_Camera">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Display Side Camera</string>
+   </property>
+  </action>
+  <action name="actionDisplay_Top_Camera">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Display Top Camera</string>
+   </property>
+  </action>
+  <action name="actionModify_Region_of_Intrest">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Modify Region of Interest</string>
+   </property>
+  </action>
+  <action name="actionModify_Mask_Properties">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Modify Mask Properties</string>
+   </property>
+  </action>
+  <action name="actionActivate_Cameras">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Activate Cameras</string>
+   </property>
+  </action>
+  <action name="actionDisplay_Shapes">
+   <property name="text">
+    <string>Display Shapes</string>
+   </property>
+  </action>
+  <action name="actionDisplay_Histograms">
+   <property name="text">
+    <string>Display Histograms</string>
+   </property>
+  </action>
+  <action name="actionDisplay_Masks">
+   <property name="text">
+    <string>Display Masks</string>
+   </property>
+  </action>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

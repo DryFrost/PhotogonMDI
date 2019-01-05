@@ -1,0 +1,7 @@
+<RCC>
+    <qresource prefix="/icons">
+        <file>Images/PhotogonLogoSplasy.png</file>
+        <file>Images/dialog-ok-apply.svg</file>
+        <file>Images/process-stop.svg</file>
+    </qresource>
+</RCC>
