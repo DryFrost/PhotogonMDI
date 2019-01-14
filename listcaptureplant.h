@@ -93,6 +93,21 @@ private:
   int Sb2HM;
   int SblurKM;
 
+  int x1Front;
+  int y1Front;
+  int x2Front;
+  int y2Front;
+
+  int x1Side;
+  int y1Side;
+  int x2Side;
+  int y2Side;
+
+  int x1Top;
+  int y1Top;
+  int x2Top;
+  int y2Top;
+
   std::vector<double> shapesTop;
   std::vector<double> shapesFront;
   std::vector<double> shapesSide;

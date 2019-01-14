@@ -71,7 +71,9 @@ SOURCES += \
     welcomescreen.cpp \
     editroi.cpp \
     selectcolorchips.cpp \
-    detectcolorchips.cpp
+    detectcolorchips.cpp \
+    createtargetcolor.cpp \
+    colorchipsmask.cpp
 
 HEADERS += \
     mainwindow.h \
@@ -103,7 +105,9 @@ HEADERS += \
     welcomescreen.h \
     editroi.h \
     selectcolorchips.h \
-    detectcolorchips.h
+    detectcolorchips.h \
+    createtargetcolor.h \
+    colorchipsmask.h
 
 FORMS += \
     mainwindow.ui \

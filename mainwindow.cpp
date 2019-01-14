@@ -308,3 +308,14 @@ void MainWindow::on_actionDisplay_Histograms_triggered()
         }
     }
 }
+
+void MainWindow::on_actionDetect_Color_Chips_triggered()
+{
+  mSelectColorChips = new selectColorChips(this);
+  loadSubWindow(mSelectColorChips);
+  if(mSelectColorChips){
+      connect(this,SIGNAL(SendRawFrameTop(cv::Mat)),mSelectColorChips,SLOT(updateMaskTop(cv::Mat)));
+      connect(this,SIGNAL(SendRawFrameSide(cv::Mat)),mSelectColorChips,SLOT(updateMaskSide(cv::Mat)));
+      connect(this,SIGNAL(SendRawFrameFront(cv::Mat)),mSelectColorChips,SLOT(updateMaskFront(cv::Mat)));
+    }
+}

@@ -53,6 +53,7 @@
     <addaction name="actionDisplay_Shapes"/>
     <addaction name="actionDisplay_Histograms"/>
     <addaction name="actionDisplay_Masks"/>
+    <addaction name="actionDetect_Color_Chips"/>
    </widget>
    <widget class="QMenu" name="menuProperties">
     <property name="title">
@@ -80,6 +81,7 @@
    <addaction name="actionOpen_Project"/>
    <addaction name="actionActivate_Cameras"/>
    <addaction name="actionOpen_Camera"/>
+   <addaction name="actionDetect_Color_Chips"/>
   </widget>
   <widget class="QToolBar" name="toolBar_2">
    <property name="windowTitle">
@@ -190,6 +192,11 @@
   <action name="actionDisplay_Masks">
    <property name="text">
     <string>Display Masks</string>
+   </property>
+  </action>
+  <action name="actionDetect_Color_Chips">
+   <property name="text">
+    <string>Detect Color Chips</string>
    </property>
   </action>
  </widget>

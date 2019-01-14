@@ -79,7 +79,7 @@ void editROI::on_save_clicked()
 
       QSettings setup(ProjectDir,QSettings::IniFormat);
       setup.setValue("x1Front",QVariant::fromValue(x1));
-      setup.setValue("y2Front",QVariant::fromValue(y1));
+      setup.setValue("y1Front",QVariant::fromValue(y1));
       setup.setValue("x2Front",QVariant::fromValue(x2));
       setup.setValue("y2Front",QVariant::fromValue(y2));
 
@@ -88,7 +88,7 @@ void editROI::on_save_clicked()
 
       QSettings setup(ProjectDir,QSettings::IniFormat);
       setup.setValue("x1Side",QVariant::fromValue(x1));
-      setup.setValue("y2Side",QVariant::fromValue(y1));
+      setup.setValue("y1Side",QVariant::fromValue(y1));
       setup.setValue("x2Side",QVariant::fromValue(x2));
       setup.setValue("y2Side",QVariant::fromValue(y2));
 

@@ -23,6 +23,7 @@
 #include "displayhistogram.h"
 #include "welcomescreen.h"
 #include "editroi.h"
+#include "selectcolorchips.h"
 
 class capturePlant;
 class displayFront;
@@ -35,6 +36,7 @@ class displayHistogram;
 class listCapturePlant;
 class QThread;
 class editROI;
+class selectColorChips;
 
 namespace Ui {
   class MainWindow;
@@ -91,6 +93,8 @@ private slots:
 
   void openRecentFile();
 
+  void on_actionDetect_Color_Chips_triggered();
+
 private:
   Ui::MainWindow *ui;
 
@@ -107,7 +111,7 @@ private:
   QPointer<displayHistogram> mDisplayHistogram;
   QPointer<listCapturePlant> mListCapturePlant;
   QPointer<editROI> mEditROI;
-
+  QPointer<selectColorChips> mSelectColorChips;
 
   int numCams;
   QThread* threads[MAX_NUM_CAM];

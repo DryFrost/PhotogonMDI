@@ -343,7 +343,7 @@ Mat ComputerVision::get_RGB_HIST(const Mat& img, const Mat& mask){
 
 }
 
-Mat ComputerVision::remove_background(const Mat& img, const Mat& blank, int blurKM,int tLowM,int tHighM,int b1LM,int b1HM,int b2LM,int b2HM){
+Mat ComputerVision::remove_background(const Mat& img, const Mat& blank, int blurKM,int tLowM,int tHighM,int b1LM,int b1HM,int b2LM,int b2HM,int x1, int y1, int x2, int y2 ){
 
   Mat dest;
   absdiff(blank,img,dest);
@@ -374,14 +374,17 @@ Mat ComputerVision::remove_background(const Mat& img, const Mat& blank, int blur
   erode(pot_dilate,pot_erode, Mat(), Point(-1, -1), 3, 1, 1);
   Mat pot_and;
   bitwise_and(pot_erode,dest_erode,pot_and);
+  Mat pot_roi;
 
-  return pot_and;
+  vector<Point> cc_pot = keep_roi(pot_and,Point(x1,y1),Point(x2,y2),pot_roi);
+
+  return pot_roi;
 
 }
 
-vector<Point> ComputerVision::get_cc(Mat img){
+vector<Point> ComputerVision::get_cc(Mat img,int x1, int y1, int x2, int y2){
     Mat temp;
-    vector<Point> cc_pot = keep_roi(std::move(img),Point(300,100),Point(1000,650),temp);
+    vector<Point> cc_pot = keep_roi(std::move(img),Point(x1,y1),Point(x2,y2),temp);
     return cc_pot;
 
 }

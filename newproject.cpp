@@ -83,6 +83,8 @@ void NewProject::on_pushButton_4_clicked()
   int x2 = 1000;
   int y2 = 650;
 
+  int a = 0;
+
   QString FileProjectDir;
   FileProjectDir = ProjectDir+"/"+ProjectName+".ini";
   QSettings setup(FileProjectDir,QSettings::IniFormat);
@@ -117,8 +119,8 @@ void NewProject::on_pushButton_4_clicked()
   setup.setValue("x1Front",QVariant::fromValue(x1));
 
   setup.setValue("y1Top",QVariant::fromValue(y1));
-  setup.setValue("y2Side",QVariant::fromValue(y1));
-  setup.setValue("y2Front",QVariant::fromValue(y1));
+  setup.setValue("y1Side",QVariant::fromValue(y1));
+  setup.setValue("y1Front",QVariant::fromValue(y1));
 
   setup.setValue("x2Top",QVariant::fromValue(x2));
   setup.setValue("x2Side",QVariant::fromValue(x2));
@@ -127,6 +129,9 @@ void NewProject::on_pushButton_4_clicked()
   setup.setValue("y2Top",QVariant::fromValue(y2));
   setup.setValue("y2Side",QVariant::fromValue(y2));
   setup.setValue("y2Front",QVariant::fromValue(y2));
+
+  setup.setValue("a",QVariant::fromValue(a));
+  setup.setValue("b",QVariant::fromValue(a));
 
 
   QString Qr;

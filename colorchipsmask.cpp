@@ -1,9 +1,12 @@
-#include "detectcolorchips.h"
+#include "colorchipsmask.h"
+
 #include <QSettings>
-
+#include <QFile>
+#include <QDir>
 using namespace std;
+using namespace cv;
 
-CvScalar colorchecker_srgb[MACBETH_HEIGHT][MACBETH_WIDTH] =
+CvScalar colorchecker_srgb1[MACBETH_HEIGHT][MACBETH_WIDTH] =
 {
     {
         cvScalar(67,81,115),
@@ -39,7 +42,7 @@ CvScalar colorchecker_srgb[MACBETH_HEIGHT][MACBETH_WIDTH] =
     }
 };
 
-double euclidean_distance(CvScalar p_1, CvScalar p_2)
+double euclidean_distance1(CvScalar p_1, CvScalar p_2)
 {
     double sum = 0;
     for(int i = 0; i < 3; i++) {
@@ -48,12 +51,12 @@ double euclidean_distance(CvScalar p_1, CvScalar p_2)
     return sqrt(sum);
 }
 
-double euclidean_distance(CvPoint p_1, CvPoint p_2)
+double euclidean_distance1(CvPoint p_1, CvPoint p_2)
 {
-    return euclidean_distance(cvScalar(p_1.x,p_1.y,0),cvScalar(p_2.x,p_2.y,0));
+    return euclidean_distance1(cvScalar(p_1.x,p_1.y,0),cvScalar(p_2.x,p_2.y,0));
 }
 
-double euclidean_distance_lab(CvScalar p_1, CvScalar p_2)
+double euclidean_distance_lab1(CvScalar p_1, CvScalar p_2)
 {
     // convert to Lab for better perceptual distance
     IplImage * convert = cvCreateImage( cvSize(2,1), 8, 3);
@@ -64,10 +67,10 @@ double euclidean_distance_lab(CvScalar p_1, CvScalar p_2)
     p_2 = cvGet2D(convert,0,1);
     cvReleaseImage(&convert);
 
-    return euclidean_distance(p_1, p_2);
+    return euclidean_distance1(p_1, p_2);
 }
 
-CvRect contained_rectangle(CvBox2D box)
+CvRect contained_rectangle1(CvBox2D box)
 {
     return cvRect(box.center.x - box.size.width/4,
                   box.center.y - box.size.height/4,
@@ -75,7 +78,7 @@ CvRect contained_rectangle(CvBox2D box)
                   box.size.height/2);
 }
 
-CvScalar rect_average(CvRect rect, IplImage* image)
+CvScalar rect_average1(CvRect rect, IplImage* image)
 {
     CvScalar average = cvScalarAll(0);
     int count = 0;
@@ -99,7 +102,7 @@ CvScalar rect_average(CvRect rect, IplImage* image)
     return average;
 }
 
-CvScalar contour_average(CvContour* contour, IplImage* image)
+CvScalar contour_average1(CvContour* contour, IplImage* image)
 {
     CvRect rect = ((CvContour*)contour)->rect;
 
@@ -125,7 +128,7 @@ CvScalar contour_average(CvContour* contour, IplImage* image)
     return average;
 }
 
-void rotate_box(CvPoint2D32f * box_corners)
+void rotate_box1(CvPoint2D32f * box_corners)
 {
     CvPoint2D32f last = box_corners[3];
     for(int i = 3; i > 0; i--) {
@@ -134,13 +137,13 @@ void rotate_box(CvPoint2D32f * box_corners)
     box_corners[0] = last;
 }
 
-double check_colorchecker(CvMat * colorchecker)
+double check_colorchecker1(CvMat * colorchecker)
 {
     double difference = 0;
 
     for(int x = 0; x < MACBETH_WIDTH; x++) {
         for(int y = 0; y < MACBETH_HEIGHT; y++) {
-            CvScalar known_value = colorchecker_srgb[y][x];
+            CvScalar known_value = colorchecker_srgb1[y][x];
             CvScalar test_value = cvGet2D(colorchecker,y,x);
             for(int i = 0; i < 3; i++){
                 difference += pow(known_value.val[i]-test_value.val[i],2);
@@ -151,28 +154,48 @@ double check_colorchecker(CvMat * colorchecker)
     return difference;
 }
 
-void draw_colorchecker(CvMat * colorchecker_values, CvMat * colorchecker_points, IplImage * image, int size)
+void draw_colorchecker1(CvMat * colorchecker_values, CvMat * colorchecker_points, IplImage * image, int size)
 {
+  Mat img = cv::cvarrToMat(image);
+  QSettings internal("internal.ini",QSettings::IniFormat);
+  QString ProjectDirA = internal.value("ProjectDir").value<QString>();
+  QSettings setup(ProjectDirA,QSettings::IniFormat);
+  QString ProjectDir = setup.value("ProjectDir").value<QString>();
+
+  QString CurrentView = internal.value("CurrentView").value<QString>();
+
+  QString Path;
+
+  int cn=0;
+
+  QString fileDir = ProjectDir+"/ColorMasks/";
+  if(!QDir(fileDir).exists()){
+      QDir().mkdir(fileDir);
+    }
+
     for(int x = 0; x < MACBETH_WIDTH; x++) {
         for(int y = 0; y < MACBETH_HEIGHT; y++) {
-            CvScalar this_color = cvGet2D(colorchecker_values,y,x);
+
             CvScalar this_point = cvGet2D(colorchecker_points,y,x);
 
-            cvCircle(
-                     image,
-                     cvPoint(this_point.val[0],this_point.val[1]),
-                     size,
-                     colorchecker_srgb[y][x],
-                     -1
-                     );
+            if(((x == 0) || (x == 5)) && (y == 3) ){
 
-            cvCircle(
-                     image,
-                     cvPoint(this_point.val[0],this_point.val[1]),
-                     size/2,
-                     this_color,
-                     -1
-                     );
+                        }
+                        else{
+                            cn=cn+1;
+                            Path = fileDir+CurrentView+QString::number(cn)+".jpg";
+                            std::string temp = Path.toUtf8().constData();
+
+                            Mat mask(img.rows,img.cols,CV_8UC1,cv::Scalar(0));
+                            rectangle(mask,
+                                        cvPoint(this_point.val[0]-size,this_point.val[1]-size),
+                                        cvPoint(this_point.val[0]+size, this_point.val[1]+size),
+                                        Scalar(255),-1,8,0);
+                            cv::imwrite(temp,mask);
+
+                        }
+
+
         }
     }
 }
@@ -184,7 +207,7 @@ struct ColorChecker {
     double size;
 };
 
-ColorChecker find_colorchecker(CvSeq * quads, CvSeq * boxes, CvMemStorage *storage, IplImage *image, IplImage *original_image)
+ColorChecker find_colorchecker1(CvSeq * quads, CvSeq * boxes, CvMemStorage *storage, IplImage *image, IplImage *original_image)
 {
     CvPoint2D32f box_corners[4];
     bool passport_box_flipped = false;
@@ -200,7 +223,6 @@ ColorChecker find_colorchecker(CvSeq * quads, CvSeq * boxes, CvMemStorage *stora
 
     //X,Y Center , Box Size Width, Box Size Height
 
-    fprintf(stderr,"Box:\n\tCenter: %f,%f\n\tSize: %f,%f\n\tAngle: %f\n",passport_box.center.x,passport_box.center.y,passport_box.size.width,passport_box.size.height,passport_box.angle);
 
 
     if(passport_box.angle < 0.0) {
@@ -210,16 +232,16 @@ ColorChecker find_colorchecker(CvSeq * quads, CvSeq * boxes, CvMemStorage *stora
     cvBoxPoints(passport_box, box_corners);
 
 
-    if(euclidean_distance(cvPointFrom32f(box_corners[0]),cvPointFrom32f(box_corners[1])) <
-       euclidean_distance(cvPointFrom32f(box_corners[1]),cvPointFrom32f(box_corners[2]))) {
+    if(euclidean_distance1(cvPointFrom32f(box_corners[0]),cvPointFrom32f(box_corners[1])) <
+       euclidean_distance1(cvPointFrom32f(box_corners[1]),cvPointFrom32f(box_corners[2]))) {
         fprintf(stderr,"Box is upright, rotating\n");
-        rotate_box(box_corners);
+        rotate_box1(box_corners);
         rotated_box = true && passport_box_flipped;
     }
 
-    double horizontal_spacing = euclidean_distance(
+    double horizontal_spacing = euclidean_distance1(
                                                    cvPointFrom32f(box_corners[0]),cvPointFrom32f(box_corners[1]))/(double)(MACBETH_WIDTH-1);
-    double vertical_spacing = euclidean_distance(
+    double vertical_spacing = euclidean_distance1(
                                                  cvPointFrom32f(box_corners[1]),cvPointFrom32f(box_corners[2]))/(double)(MACBETH_HEIGHT-1);
     double horizontal_slope = (box_corners[1].y - box_corners[0].y)/(box_corners[1].x - box_corners[0].x);
     double horizontal_mag = sqrt(1+pow(horizontal_slope,2));
@@ -239,7 +261,7 @@ ColorChecker find_colorchecker(CvSeq * quads, CvSeq * boxes, CvMemStorage *stora
     {
         CvBox2D box = (*(CvBox2D*)cvGetSeqElem(boxes, i));
 
-        CvRect rect = contained_rectangle(box);
+        CvRect rect = contained_rectangle1(box);
         average_size += MIN(rect.width, rect.height);
     }
     average_size /= boxes->total;
@@ -277,15 +299,15 @@ ColorChecker find_colorchecker(CvSeq * quads, CvSeq * boxes, CvMemStorage *stora
 
 
 
-            CvScalar average_color = rect_average(rect, original_image);
+            CvScalar average_color = rect_average1(rect, original_image);
 
             cvSet2D(this_colorchecker,y,x,average_color);
         }
     }
 
-    double orient_1_error = check_colorchecker(this_colorchecker);
+    double orient_1_error = check_colorchecker1(this_colorchecker);
     cvFlip(this_colorchecker,NULL,-1);
-    double orient_2_error = check_colorchecker(this_colorchecker);
+    double orient_2_error = check_colorchecker1(this_colorchecker);
 
     fprintf(stderr,"Orientation 1: %f\n",orient_1_error);
     fprintf(stderr,"Orientation 2: %f\n",orient_2_error);
@@ -308,7 +330,7 @@ ColorChecker find_colorchecker(CvSeq * quads, CvSeq * boxes, CvMemStorage *stora
     return found_colorchecker;
 }
 
-CvSeq * find_quad( CvSeq * src_contour, CvMemStorage *storage, int min_size)
+CvSeq * find_quad1( CvSeq * src_contour, CvMemStorage *storage, int min_size)
 {
     CvMemStorage * temp_storage = cvCreateChildMemStorage( storage );
 
@@ -371,7 +393,7 @@ CvSeq * find_quad( CvSeq * src_contour, CvMemStorage *storage, int min_size)
 
 //THINGS TO REPLACE .. IplImage *image w/ const char *macbeth_img
 
-IplImage * detectColorChips::find_macbeth( IplImage *macbeth_img )
+IplImage * colorChipsMask::find_macbeth1( IplImage *macbeth_img )
 {
 
     //REMOVE
@@ -445,13 +467,13 @@ IplImage * detectColorChips::find_macbeth( IplImage *macbeth_img )
                 // only interested in contours with these restrictions
                 if(CV_IS_SEQ_HOLE(c) && rect.width*rect.height >= min_size) {
                     // only interested in quad-like contours
-                    CvSeq * quad_contour = find_quad(c, storage, min_size);
+                    CvSeq * quad_contour = find_quad1(c, storage, min_size);
                     if(quad_contour) {
                         cvSeqPush( initial_quads, &quad_contour );
                         count++;
                         rect = ((CvContour*)quad_contour)->rect;
 
-                        CvScalar average = contour_average((CvContour*)quad_contour, macbeth_img);
+                        CvScalar average = contour_average1((CvContour*)quad_contour, macbeth_img);
 
                         CvBox2D box = cvMinAreaRect2(quad_contour,storage);
                         cvSeqPush( initial_boxes, &box );
@@ -462,7 +484,7 @@ IplImage * detectColorChips::find_macbeth( IplImage *macbeth_img )
                         CvPoint closest_color_idx = cvPoint(-1,-1);
                         for(int y = 0; y < MACBETH_HEIGHT; y++) {
                             for(int x = 0; x < MACBETH_WIDTH; x++) {
-                                double distance = euclidean_distance_lab(average,colorchecker_srgb[y][x]);
+                                double distance = euclidean_distance_lab1(average,colorchecker_srgb1[y][x]);
                                 if(distance < min_distance) {
                                     closest_color_idx.x = x;
                                     closest_color_idx.y = y;
@@ -471,7 +493,7 @@ IplImage * detectColorChips::find_macbeth( IplImage *macbeth_img )
                             }
                         }
 
-                        CvScalar closest_color = colorchecker_srgb[closest_color_idx.y][closest_color_idx.x];
+                        CvScalar closest_color = colorchecker_srgb1[closest_color_idx.y][closest_color_idx.x];
 
                     }
                 }
@@ -522,7 +544,7 @@ IplImage * detectColorChips::find_macbeth( IplImage *macbeth_img )
                 // check each of the two partitioned sets for the best colorchecker
                 for(int i = 0; i < 2; i++) {
                     partitioned_checkers[i] =
-                    find_colorchecker(partitioned_quads[i], partitioned_boxes[i],
+                    find_colorchecker1(partitioned_quads[i], partitioned_boxes[i],
                                       storage, macbeth_img, macbeth_original);
                 }
 
@@ -535,41 +557,14 @@ IplImage * detectColorChips::find_macbeth( IplImage *macbeth_img )
             }
             else { // just one colorchecker to test
                 fprintf(stderr,"\n");
-                found_colorchecker = find_colorchecker(initial_quads, initial_boxes,
+                found_colorchecker = find_colorchecker1(initial_quads, initial_boxes,
                                                        storage, macbeth_img, macbeth_original);
             }
 
             // render the found colorchecker
-            draw_colorchecker(found_colorchecker.values,found_colorchecker.points,macbeth_img,found_colorchecker.size);
+            draw_colorchecker1(found_colorchecker.values,found_colorchecker.points,macbeth_img,found_colorchecker.size);
 
-            QSettings internal("internal.ini",QSettings::IniFormat);
 
-            vector<int> colorINFO;
-
-            // print out the colorchecker info
-            for(int y = 0; y < MACBETH_HEIGHT; y++) {
-                for(int x = 0; x < MACBETH_WIDTH; x++) {
-                    CvScalar this_value = cvGet2D(found_colorchecker.values,y,x);
-                    CvScalar this_point = cvGet2D(found_colorchecker.points,y,x);
-
-                    colorINFO.push_back (this_value.val[2]);
-                    colorINFO.push_back (this_value.val[1]);
-                    colorINFO.push_back (this_value.val[0]);
-                }
-            }
-
-            colorINFO.erase (colorINFO.begin()+69,colorINFO.begin()+72);
-            colorINFO.erase (colorINFO.begin()+54,colorINFO.begin()+57);
-
-            QStringList colorInf;
-            for(int y=0; y<colorINFO.size();y++){
-                colorInf << QString("%1").arg(colorINFO.at(y));
-              }
-
-            internal.setValue("ColorInfo",QVariant::fromValue(colorInf));
-
-            //Yo
-            printf("%0.f\n%f\n",found_colorchecker.size,found_colorchecker.error);
 
         }
 
@@ -585,4 +580,3 @@ IplImage * detectColorChips::find_macbeth( IplImage *macbeth_img )
 
     return NULL;
 }
-

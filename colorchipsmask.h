@@ -1,5 +1,6 @@
-#ifndef DETECTCOLORCHIPS_H
-#define DETECTCOLORCHIPS_H
+#ifndef COLORCHIPSMASK_H
+#define COLORCHIPSMASK_H
+
 
 #include <stdio.h>
 #include <opencv/cv.h>
@@ -15,10 +16,10 @@
 
 #define MAX_RGB_DISTANCE 444
 
-class detectColorChips
+class colorChipsMask
 {
 public:
-  IplImage * find_macbeth( IplImage *macbeth_img );
+  IplImage * find_macbeth1( IplImage *macbeth_img );
 };
 
-#endif // DETECTCOLORCHIPS_H
+#endif // COLORCHIPSMASK_H

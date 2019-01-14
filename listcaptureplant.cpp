@@ -56,10 +56,27 @@ listCapturePlant::listCapturePlant(QWidget *parent) :
   Tb2LM = setup.value("Tb2LM").value<int>();
   Tb2HM = setup.value("Tb2HM").value<int>();
   TblurKM = setup.value("TblurKM").value<int>();
-  ui->setupUi(this);
 
-  a=0;
-  b=0;
+  x1Front = setup.value("x1Front").value<int>();
+  x1Side = setup.value("x1Side").value<int>();
+  x1Top = setup.value("x1Top").value<int>();
+
+  x2Front = setup.value("x2Front").value<int>();
+  x2Side = setup.value("x2Side").value<int>();
+  x2Top = setup.value("x2Top").value<int>();
+
+  y1Front = setup.value("y1Front").value<int>();
+  y1Side = setup.value("y1Side").value<int>();
+  y1Top = setup.value("y1Top").value<int>();
+
+  y2Front = setup.value("y2Front").value<int>();
+  y2Side = setup.value("y2Side").value<int>();
+  y2Top = setup.value("y2Top").value<int>();
+
+  a = setup.value("a").value<int>();
+  b = setup.value("b").value<int>();
+
+  ui->setupUi(this);
 
   QString instructions;
   instructions = "Clear the chamber";
@@ -134,13 +151,13 @@ void listCapturePlant::on_capturePlant_clicked()
 
   ComputerVision cvA;
 
-  Mat noFBG = cvA.remove_background(rawFront,blankFront,FblurKM,FtLowM,FtHighM,Fb1LM,Fb1HM,Fb2LM,Fb2HM);
-  Mat noTBG = cvA.remove_background(rawTop,blankTop,TblurKM,TtLowM,TtHighM,Tb1LM,Tb1HM,Tb2LM,Tb2HM);
-  Mat noSBG = cvA.remove_background(rawSide,blankSide,SblurKM,StLowM,StHighM,Sb1LM,Sb1HM,Sb2LM,Sb2HM);
+  Mat noFBG = cvA.remove_background(rawFront,blankFront,FblurKM,FtLowM,FtHighM,Fb1LM,Fb1HM,Fb2LM,Fb2HM,x1Front,y1Front,x2Front,y2Front);
+  Mat noTBG = cvA.remove_background(rawTop,blankTop,TblurKM,TtLowM,TtHighM,Tb1LM,Tb1HM,Tb2LM,Tb2HM,x1Top,y1Top,x2Top,y2Top);
+  Mat noSBG = cvA.remove_background(rawSide,blankSide,SblurKM,StLowM,StHighM,Sb1LM,Sb1HM,Sb2LM,Sb2HM,x1Side,y1Side,x2Side,y2Side);
 
-  std::vector<Point> ccFront = cvA.get_cc(noFBG);
-  std::vector<Point> ccTop = cvA.get_cc(noTBG);
-  std::vector<Point> ccSide = cvA.get_cc(noSBG);
+  std::vector<Point> ccFront = cvA.get_cc(noFBG,x1Front,y1Front,x2Front,y2Front);
+  std::vector<Point> ccTop = cvA.get_cc(noTBG,x1Top,y1Top,x2Top,y2Top);
+  std::vector<Point> ccSide = cvA.get_cc(noSBG,x1Side,y1Side,x2Side,y2Side);
 
   shapesTop = cvA.get_shapes(ccTop,noTBG);
   shapesFront = cvA.get_shapes(ccFront,noFBG);
