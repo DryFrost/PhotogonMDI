@@ -28,6 +28,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
 void MainWindow::openRecentFile(){
   loadFile(qobject_cast<QAction*>(sender())->data().toString());
+  ui->actionActivate_Cameras->setEnabled(true);
 }
 
 void MainWindow::loadFile(QString filePath){
@@ -96,6 +97,8 @@ void MainWindow::on_actionNew_Project_triggered()
 
 void MainWindow::displayFrame(cv::Mat frame, int  index)
 {
+  //CREATE EMPTY FRAMES;
+
   if(index == 0){
       RawFrameFront=frame;
 
@@ -122,6 +125,9 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_actionOpen_Camera_triggered()
 {
+  ui->actionDisplay_Masks->setEnabled(true);
+  ui->actionDisplay_Shapes->setEnabled(true);
+  ui->actionDisplay_Histograms->setEnabled(true);
   qDebug() << Qr;
   if(Qr=="true"){
       qDebug() << "trying to open QR";
@@ -213,11 +219,16 @@ void MainWindow::on_actionModify_Mask_Properties_triggered()
 void MainWindow::on_actionActivate_Cameras_triggered()
 {
 
-  int numCams = 3;
+  udp = new MyUDP(this);
+
+  QString command = "Capture";
+  udp->deviceDiscover(command);
+
+  int numCams = 1;
   for(int i = 0; i < numCams; i++)
   {
       threads[i] = new QThread;
-      workers[i] = new Worker(QString("http://10.106.47.112:8080/live.wmv"),i);
+      workers[i] = new Worker(QString("10.0.1.23"),i);
 
       workers[i]->moveToThread(threads[i]);
 
@@ -238,6 +249,7 @@ void MainWindow::on_actionActivate_Cameras_triggered()
   ui->actionModify_Mask_Properties->setEnabled(true);
   ui->actionModify_Region_of_Intrest->setEnabled(true);
   ui->actionOpen_Camera->setEnabled(true);
+  ui->actionDetect_Color_Chips->setEnabled(true);
 
 }
 
@@ -318,4 +330,9 @@ void MainWindow::on_actionDetect_Color_Chips_triggered()
       connect(this,SIGNAL(SendRawFrameSide(cv::Mat)),mSelectColorChips,SLOT(updateMaskSide(cv::Mat)));
       connect(this,SIGNAL(SendRawFrameFront(cv::Mat)),mSelectColorChips,SLOT(updateMaskFront(cv::Mat)));
     }
+}
+
+void MainWindow::on_actionDetect_Cameras_triggered()
+{
+    new cameraDiscovery();
 }

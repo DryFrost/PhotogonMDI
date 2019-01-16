@@ -46,8 +46,6 @@ void createTargetColor::ColorFound(cv::Mat cc){
 
   QString Path;
 
-  int cn=0;
-
   QString fileDir = ProjectDir+"/ColorMasks/";
   if(!QDir(fileDir).exists()){
       QDir().mkdir(fileDir);
@@ -65,7 +63,7 @@ void createTargetColor::ColorFound(cv::Mat cc){
                 stringstream ss;
                 ss << i;
                 string str = ss.str();
-                string file_name = temp.toUtf8().constData()+str;
+                string file_name = temp.toUtf8().constData()+str+".jpg";
                 Mat mask = imread(file_name,0);
                 Mat cc;
                         threshold(mask,cc,90,255,THRESH_BINARY);

@@ -79,6 +79,7 @@
    </attribute>
    <addaction name="actionNew_Project"/>
    <addaction name="actionOpen_Project"/>
+   <addaction name="actionDetect_Cameras"/>
    <addaction name="actionActivate_Cameras"/>
    <addaction name="actionOpen_Camera"/>
    <addaction name="actionDetect_Color_Chips"/>
@@ -180,23 +181,40 @@
    </property>
   </action>
   <action name="actionDisplay_Shapes">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="text">
     <string>Display Shapes</string>
    </property>
   </action>
   <action name="actionDisplay_Histograms">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="text">
     <string>Display Histograms</string>
    </property>
   </action>
   <action name="actionDisplay_Masks">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="text">
     <string>Display Masks</string>
    </property>
   </action>
   <action name="actionDetect_Color_Chips">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="text">
     <string>Detect Color Chips</string>
+   </property>
+  </action>
+  <action name="actionDetect_Cameras">
+   <property name="text">
+    <string>Detect Cameras</string>
    </property>
   </action>
  </widget>

@@ -60,6 +60,7 @@ void NewProject::on_pushButton_5_clicked()
 
 void NewProject::on_Config_clicked()
 {
+
   new configDialog();
 }
 

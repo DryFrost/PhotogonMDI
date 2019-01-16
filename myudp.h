@@ -6,13 +6,14 @@
 #include <QDebug>
 #include <QUdpSocket>
 #include <QNetworkInterface>
+
 class QUdpSocket;
 class MyUDP : public QObject
 {
     Q_OBJECT
 public:
     explicit MyUDP(QObject *parent = 0);
-    void deviceDiscover();
+    void deviceDiscover(QString command);
 signals:
     void updateList(QString IP);
 public slots:

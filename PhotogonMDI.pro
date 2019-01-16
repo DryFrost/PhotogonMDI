@@ -20,6 +20,8 @@ mac {
     PKGCONFIG += zbar
     QT_CONFIG -= no-pkg-config
     LIBS += -L/usr/local/Cellar/opencv/3.4.3/lib/
+    INCLUDEPATH += /usr/local/include/eigen3/
+
     plist.path = "$$DESTDIR/$$join(TARGET,,,.app)/Contents"
     plist.files = Info.plist
     INSTALLS += plist

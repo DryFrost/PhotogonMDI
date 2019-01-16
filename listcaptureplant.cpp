@@ -76,6 +76,26 @@ listCapturePlant::listCapturePlant(QWidget *parent) :
   a = setup.value("a").value<int>();
   b = setup.value("b").value<int>();
 
+  ColorStandardization = setup.value("Color-Standardization").value<bool>();
+  Area = setup.value("Area").value<bool>();
+  HullArea = setup.value("Hull-Area").value<bool>();
+  Solidity = setup.value("Solidity").value<bool>();
+  Perimeter = setup.value("Perimeter").value<bool>();
+  Width = setup.value("Width").value<bool>();
+  Height = setup.value("Height").value<bool>();
+  CMX = setup.value("CMX").value<bool>();
+  CMY = setup.value("CMY").value<bool>();
+  HullVerticies = setup.value("Hull-Verticies").value<bool>();
+  EX = setup.value("EX").value<bool>();
+  EY = setup.value("EY").value<bool>();
+  EMajor = setup.value("EMajor").value<bool>();
+  EMinor = setup.value("EMinor").value<bool>();
+  Angle = setup.value("Angle").value<bool>();
+  Eccen = setup.value("Eccen").value<bool>();
+  Circ = setup.value("Circ").value<bool>();
+  Round = setup.value("Round").value<bool>();
+  AR = setup.value("AR").value<bool>();
+
   ui->setupUi(this);
 
   QString instructions;
@@ -151,9 +171,9 @@ void listCapturePlant::on_capturePlant_clicked()
 
   ComputerVision cvA;
 
-  Mat noFBG = cvA.remove_background(rawFront,blankFront,FblurKM,FtLowM,FtHighM,Fb1LM,Fb1HM,Fb2LM,Fb2HM,x1Front,y1Front,x2Front,y2Front);
-  Mat noTBG = cvA.remove_background(rawTop,blankTop,TblurKM,TtLowM,TtHighM,Tb1LM,Tb1HM,Tb2LM,Tb2HM,x1Top,y1Top,x2Top,y2Top);
-  Mat noSBG = cvA.remove_background(rawSide,blankSide,SblurKM,StLowM,StHighM,Sb1LM,Sb1HM,Sb2LM,Sb2HM,x1Side,y1Side,x2Side,y2Side);
+  Mat noFBG = cvA.remove_background(rawFront,blankFront,FblurKM,FtLowM,FtHighM,Fb1LM,Fb1HM,Fb2LM,Fb2HM,x1Front,y1Front,x2Front,y2Front,"Front",ColorStandardization);
+  Mat noTBG = cvA.remove_background(rawTop,blankTop,TblurKM,TtLowM,TtHighM,Tb1LM,Tb1HM,Tb2LM,Tb2HM,x1Top,y1Top,x2Top,y2Top,"Top",ColorStandardization);
+  Mat noSBG = cvA.remove_background(rawSide,blankSide,SblurKM,StLowM,StHighM,Sb1LM,Sb1HM,Sb2LM,Sb2HM,x1Side,y1Side,x2Side,y2Side,"Side",ColorStandardization);
 
   std::vector<Point> ccFront = cvA.get_cc(noFBG,x1Front,y1Front,x2Front,y2Front);
   std::vector<Point> ccTop = cvA.get_cc(noTBG,x1Top,y1Top,x2Top,y2Top);

@@ -112,6 +112,26 @@ private:
   int x2Top;
   int y2Top;
 
+  bool ColorStandardization;
+  bool Area;
+  bool HullArea;
+  bool Solidity;
+  bool Perimeter;
+  bool Width;
+  bool Height;
+  bool CMX;
+  bool CMY;
+  bool HullVerticies;
+  bool EX;
+  bool EY;
+  bool EMajor;
+  bool EMinor;
+  bool Angle;
+  bool Eccen;
+  bool Circ;
+  bool Round;
+  bool AR;
+
   QTimer *timer;
   std::vector<double> shapesTop;
   std::vector<double> shapesFront;

@@ -8,9 +8,9 @@ MyUDP::MyUDP(QObject *parent) :
     socket->bind(QHostAddress::Any,5000);
     connect(socket,SIGNAL(readyRead()),this,SLOT(readyRead()));
 }
-void MyUDP::deviceDiscover(){
+void MyUDP::deviceDiscover(QString command){
     QByteArray data;
-    data.append("Request");
+    data.append(command);
     qDebug() << "Sending broadcast";
     socket->writeDatagram(data,QHostAddress::Broadcast,5000);
 }
@@ -24,6 +24,7 @@ void MyUDP::readyRead(){
     qDebug() << "Msg: " << buffer;
     if(QString(buffer).compare("PI")==0){
         emit(updateList(sender.toString()));
+        qDebug() << "Emitting change";
     }
 }
 

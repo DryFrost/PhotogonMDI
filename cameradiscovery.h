@@ -29,7 +29,7 @@ private slots:
 
 private:
   Ui::cameraDiscovery *ui;
-  MyUDP* udp;
+  MyUDP* udp1;
   QStringList currentIPs;
 };
 

@@ -7,10 +7,178 @@
 #include <string>
 #include <utility>
 #include <cmath>
-
+#include <Eigen/Dense>
+#include <QSettings>
+#include <QFile>
 
 using namespace cv;
 using namespace std;
+using namespace Eigen;
+
+
+float extractRGB_chips(Mat &img,Mat &mask){
+    //-- Averages the histogram for a given channel
+    Mat hist;
+    int dims = 1;
+    int histSize = 256;
+    float hranges[] = { 0, 256 };
+    const float *ranges = {hranges};
+
+    calcHist(&img,1,0,mask,hist, dims, &histSize, &ranges ,true ,false);
+
+    int sum=0;
+    for(int i = 0;i<256;i++){
+        sum += hist.at<float>(i,0);
+    }
+    Mat weights = hist/sum;
+    float hist_avg=0.0;
+    for(int i = 0;i<256;i++){
+        hist_avg += i*weights.at<float>(i,0);
+    }
+
+
+    return hist_avg;
+}
+
+MatrixXd getRGBarray(Mat img, QString CurrentView){
+    //-- Loops over chips and gets RGB values of each one
+    MatrixXd sourceColors(22,3);
+    vector<Mat> bgr;
+    split(img, bgr);
+    Mat b = bgr[0];
+    Mat g = bgr[1];
+    Mat r = bgr[2];
+
+    QSettings internal("internal.ini",QSettings::IniFormat);
+    QString ProjectDirA = internal.value("ProjectDir").value<QString>();
+    QSettings setup(ProjectDirA,QSettings::IniFormat);
+    QString ProjectDir = setup.value("ProjectDir").value<QString>();
+
+    QString Path;
+
+
+    QString fileDir = ProjectDir+"/ColorMasks/";
+
+    QString temp;
+    temp = fileDir+CurrentView;
+
+    for(unsigned int i=1;i<23;i++){
+        stringstream ss;
+        ss << i;
+        string str = ss.str();
+        string file_name = temp.toUtf8().constData()+str+".jpg";
+        Mat mask = imread(file_name,0);
+        Mat cc;
+        threshold(mask,cc,90,255,THRESH_BINARY);
+
+        float b_avg = extractRGB_chips(b, cc);
+        float g_avg = extractRGB_chips(g, cc);
+        float r_avg = extractRGB_chips(r, cc);
+        sourceColors(i-1,0) = b_avg;
+        sourceColors(i-1,1) = g_avg;
+        sourceColors(i-1,2) = r_avg;
+    }
+    return(sourceColors);
+}
+
+void get_standardizations(Mat img, float &det, MatrixXd &rh,MatrixXd &gh,MatrixXd &bh, QString CurrentView){
+    //-- Extending source RGB chips to squared and cubic terms
+    MatrixXd source1, source2, source3;
+    source1 = getRGBarray(img,CurrentView);
+    source2 = (source1.array() * source1.array()).matrix();
+    source3 = (source2.array() * source1.array()).matrix();
+    MatrixXd source(source1.rows(),source1.cols()+source2.cols()+source3.cols());
+    source << source1, source2, source3;
+    //-- Computing Moore-Penrose Inverse
+    MatrixXd M = (source.transpose()*source).inverse()*source.transpose();
+
+    //-- Reading target homography
+    MatrixXd target(22,3);
+    fstream file;
+
+    QSettings internal("internal.ini",QSettings::IniFormat);
+    QString ProjectDirA = internal.value("ProjectDir").value<QString>();
+    QSettings setup(ProjectDirA,QSettings::IniFormat);
+    QString ProjectDir = setup.value("ProjectDir").value<QString>();
+    QString fileDir = ProjectDir+"/ColorMasks/";
+    QString tempPath = fileDir+CurrentView+"target.csv";
+
+    file.open(tempPath.toUtf8().constData());
+    string value;
+    int rowCounter = 0;
+    while ( getline ( file, value) )
+    {
+        vector<float> result;
+        stringstream substr(value);
+        string item;
+        while (getline(substr, item, ',')) {
+            const char *cstr = item.c_str();
+            char* pend;
+            float num = strtof(cstr,&pend);
+            result.push_back(num);
+        }
+        target(rowCounter,0) = result[0];
+        target(rowCounter,1) = result[1];
+        target(rowCounter,2) = result[2];
+        rowCounter++;
+    }
+
+    //-- Computing linear target RGB standardizations
+    rh = M*target.col(0);
+    gh = M*target.col(1);
+    bh = M*target.col(2);
+
+
+    //-- Extending target RGB chips to squared and cubic terms
+    MatrixXd target1, target2, target3;
+    target2 = (target.array() * target.array()).matrix();
+    target3 = (target2.array() * target.array()).matrix();
+
+    //-- Computing square and cubic target RGB standardizations
+    MatrixXd r2h,g2h,b2h,r3h,g3h,b3h;
+    r2h = M*target2.col(0);
+    g2h = M*target2.col(1);
+    b2h = M*target2.col(2);
+    r3h = M*target3.col(0);
+    g3h = M*target3.col(1);
+    b3h = M*target3.col(2);
+
+    //-- Computing D
+    MatrixXd H(9,9);
+    H << bh.col(0),gh.col(0),rh.col(0),b2h.col(0),g2h.col(0),r2h.col(0),b3h.col(0),g3h.col(0),r3h.col(0);
+    det = H.transpose().determinant();
+}
+
+Mat color_homography(Mat img, MatrixXd r_coef,MatrixXd g_coef,MatrixXd b_coef){
+    Mat b, g, r, b2, g2, r2, b3, g3, r3;
+    vector<Mat> bgr(3);
+    split(img,bgr);
+
+    //-- Computing linear, squared, and cubed images
+    b = bgr[0];
+    g = bgr[1];
+    r = bgr[2];
+    b2 = b.mul(b);
+    g2 = g.mul(g);
+    r2 = r.mul(r);
+    b3 = b2.mul(b);
+    g3 = g2.mul(g);
+    r3 = r2.mul(r);
+
+    //-- Computing homography
+    b = 0+r*b_coef(0,0)+g*b_coef(1,0)+b*b_coef(2,0)+r2*b_coef(3,0)+g2*b_coef(4,0)+b2*b_coef(5,0)+r3*b_coef(6,0)+g3*b_coef(7,0)+b3*b_coef(8,0);
+    g = 0+r*g_coef(0,0)+g*g_coef(1,0)+b*g_coef(2,0)+r2*g_coef(3,0)+g2*g_coef(4,0)+b2*g_coef(5,0)+r3*g_coef(6,0)+g3*g_coef(7,0)+b3*g_coef(8,0);
+    r = 0+r*r_coef(0,0)+g*r_coef(1,0)+b*r_coef(2,0)+r2*r_coef(3,0)+g2*r_coef(4,0)+b2*r_coef(5,0)+r3*r_coef(6,0)+g3*r_coef(7,0)+b3*r_coef(8,0);
+
+    //-- Combining channels and returning
+    bgr[0] = b;
+    bgr[1] = g;
+    bgr[2] = r;
+    Mat adjImage;
+    merge(bgr,adjImage);
+    return adjImage;
+}
+
 
 Mat fill_holes(Mat src){
     Mat dst = Mat::zeros(src.size(),src.type());
@@ -343,10 +511,30 @@ Mat ComputerVision::get_RGB_HIST(const Mat& img, const Mat& mask){
 
 }
 
-Mat ComputerVision::remove_background(const Mat& img, const Mat& blank, int blurKM,int tLowM,int tHighM,int b1LM,int b1HM,int b2LM,int b2HM,int x1, int y1, int x2, int y2 ){
+Mat ComputerVision::remove_background(const Mat& img, const Mat& blank, int blurKM,int tLowM,int tHighM,int b1LM,int b1HM,int b2LM,int b2HM,int x1, int y1, int x2, int y2, QString CurrentView, bool ColorStandardization ){
+
+  Mat adjImg;
+
+  if(ColorStandardization){
+
+
+
+      float det = 0;
+
+      MatrixXd rh, gh, bh;
+
+      get_standardizations(img,det,rh,gh,bh,CurrentView);
+
+      adjImg = color_homography(img,rh,gh,bh);
+
+    }
+  if(!ColorStandardization){
+      adjImg = img;
+    }
+
 
   Mat dest;
-  absdiff(blank,img,dest);
+  absdiff(blank,adjImg,dest);
   vector<Mat> channels(3);
   split(dest,channels);
   Mat dest_blur;

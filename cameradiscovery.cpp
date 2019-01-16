@@ -7,8 +7,8 @@ cameraDiscovery::cameraDiscovery(QWidget *parent) :
 {
   ui->setupUi(this);
   show();
-  udp = new MyUDP(this);
-  connect(udp,SIGNAL(updateList(QString)),this,SLOT(onUDPReceived(QString)));
+  udp1 = new MyUDP(this);
+  connect(udp1,SIGNAL(updateList(QString)),this,SLOT(onUDPReceived(QString)));
 }
 
 cameraDiscovery::~cameraDiscovery()
@@ -23,7 +23,8 @@ void cameraDiscovery::on_pushButton_4_clicked()
 
 void cameraDiscovery::on_pushButton_clicked()
 {
-  udp->deviceDiscover();
+  QString command = "Request";
+  udp1->deviceDiscover(command);
 }
 
 void cameraDiscovery::on_pushButton_2_clicked()
@@ -32,9 +33,10 @@ void cameraDiscovery::on_pushButton_2_clicked()
   ui->tableWidget->setRowCount(0);
 }
 
-void cameraDiscovery::onUDPReceived(const QString address){
+void cameraDiscovery::onUDPReceived(QString address){
   if(!currentIPs.contains(address)){
       currentIPs.append(address);
+      qDebug() << "Updating List";
       QHostInfo HI = QHostInfo::fromName(address);
       int row = ui->tableWidget->rowCount();
       ui->tableWidget->insertRow(row);

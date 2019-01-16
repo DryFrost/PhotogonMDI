@@ -4,6 +4,9 @@
 
 #include<QApplication>
 #include<opencv2/opencv.hpp>
+#include <sys/socket.h>
+#include <arpa/inet.h>
+#include <unistd.h>
 
 class Worker : public QObject
 {

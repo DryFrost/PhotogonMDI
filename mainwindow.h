@@ -24,6 +24,8 @@
 #include "welcomescreen.h"
 #include "editroi.h"
 #include "selectcolorchips.h"
+#include "cameradiscovery.h"
+#include "myudp.h"
 
 class capturePlant;
 class displayFront;
@@ -95,6 +97,8 @@ private slots:
 
   void on_actionDetect_Color_Chips_triggered();
 
+  void on_actionDetect_Cameras_triggered();
+
 private:
   Ui::MainWindow *ui;
 
@@ -139,6 +143,8 @@ private:
   void loadFile(QString);
 
   QAction* mActionSeparatorRecentFiles;
+
+  MyUDP* udp;
 };
 
 #endif // MAINWINDOW_H
