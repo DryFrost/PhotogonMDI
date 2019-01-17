@@ -20,6 +20,8 @@ public:
     Mat get_color_Hue(const Mat& img, const Mat& mask);
     Mat get_color_Saturation(const Mat& img, const Mat& mask);
     Mat get_color_Value(const Mat& img, const Mat& mask);
+    vector<int> getNodes(const Mat& img);
+    vector<int> getTips(const Mat& img);
 
     vector<Point> get_cc(Mat img, int x1, int y1, int x2, int y2);
     vector<double> get_shapes(const vector<Point>& cc,const Mat& mask);

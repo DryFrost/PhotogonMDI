@@ -16,6 +16,58 @@ using namespace std;
 using namespace Eigen;
 
 
+void thinningIteration(cv::Mat& img, int iter)
+{
+    Mat marker = Mat::zeros(img.size(),CV_8UC1);
+
+    for (int i = 1; i < img.rows-1; i++)
+    {
+        for (int j = 1; j < img.cols-1; j++)
+        {
+            uchar p2 = img.at<uchar>(i-1, j);
+            uchar p3 = img.at<uchar>(i-1, j+1);
+            uchar p4 = img.at<uchar>(i, j+1);
+            uchar p5 = img.at<uchar>(i+1, j+1);
+            uchar p6 = img.at<uchar>(i+1, j);
+            uchar p7 = img.at<uchar>(i+1, j-1);
+            uchar p8 = img.at<uchar>(i, j-1);
+            uchar p9 = img.at<uchar>(i-1, j-1);
+
+            int C  = ((!p2) & (p3 | p4)) + ((!p4) & (p5 | p6)) +
+            ((!p6) & (p7 | p8)) + ((!p8) & (p9 | p2));
+            int N1 = (p9 | p2) + (p3 | p4) + (p5 | p6) + (p7 | p8);
+            int N2 = (p2 | p3) + (p4 | p5) + (p6 | p7) + (p8 | p9);
+            int N  = N1 < N2 ? N1 : N2;
+            int m  = iter == 0 ? ((p6 | p7 | (!p9)) & p8) : ((p2 | p3 | (!p5)) & p4);
+
+            if ((C == 1) && ((N >= 2) && ((N <= 3)) & (m == 0)))
+                marker.at<uchar>(i,j) = 1;
+        }
+    }
+
+    img &= ~marker;
+}
+
+
+void thinning(const cv::Mat& src, cv::Mat& dst)
+{
+    dst = src.clone();
+    dst /= 255;         // convert to binary image
+
+    cv::Mat prev = cv::Mat::zeros(dst.size(), CV_8UC1);
+    cv::Mat diff;
+
+    do {
+        thinningIteration(dst, 0);
+        thinningIteration(dst, 1);
+        cv::absdiff(dst, prev, diff);
+        dst.copyTo(prev);
+    }
+    while (cv::countNonZero(diff) > 0);
+
+    dst *= 255;
+}
+
 float extractRGB_chips(Mat &img,Mat &mask){
     //-- Averages the histogram for a given channel
     Mat hist;
@@ -532,6 +584,45 @@ Mat ComputerVision::remove_background(const Mat& img, const Mat& blank, int blur
       adjImg = img;
     }
 
+  Mat lab;
+  Mat adjImage1 = adjImg.clone();
+  cvtColor(adjImage1, lab, cv::COLOR_BGR2Lab);
+  vector<Mat> split_lab;
+  split(lab,split_lab);
+  Mat mask_b;
+  threshold(split_lab[2], mask_b, 130, 255,THRESH_BINARY);
+  medianBlur(mask_b, mask_b, 5);
+  mask_b=fill_holes(mask_b);
+
+  Mat hsv;
+  cvtColor(adjImage1, hsv, cv::COLOR_BGR2HSV);
+  vector<Mat> split_hsv;
+  split(hsv, split_hsv);
+  Mat mask_s;
+  threshold(split_hsv[1], mask_s, 85, 255, THRESH_BINARY);
+  medianBlur(mask_s, mask_s, 5);
+  mask_s=fill_holes(mask_s);
+
+  Mat mask_erode;
+  bitwise_or(mask_b, mask_s, mask_erode);
+
+  Mat masked;
+  adjImg.copyTo(masked,mask_erode);
+  Mat masked_a;
+  cvtColor(masked, masked_a, cv::COLOR_BGR2Lab);
+  vector<Mat> split_lab_a;
+  split(masked_a,split_lab_a);
+  Mat maskeda_thresh;
+  threshold(split_lab_a[1], maskeda_thresh, 115, 255, THRESH_BINARY_INV);
+  Mat maskeda_thresh1;
+  threshold(split_lab_a[1], maskeda_thresh1, 135, 255, THRESH_BINARY);
+  Mat maskedb_thresh;
+  threshold(split_lab_a[2], maskedb_thresh, 128, 255, THRESH_BINARY);
+  Mat ab1;
+  Mat ab;
+  bitwise_or(maskeda_thresh, maskedb_thresh, ab1);
+  bitwise_or(maskeda_thresh1, ab1, ab);
+
 
   Mat dest;
   absdiff(blank,adjImg,dest);
@@ -545,6 +636,10 @@ Mat ComputerVision::remove_background(const Mat& img, const Mat& blank, int blur
   dilate(dest_thresh,dest_dilate,Mat(), Point(-1,-1),5,1,1);
   Mat dest_erode;
   erode(dest_dilate,dest_erode,Mat(),Point(-1,-1),5,1,1);
+
+  Mat mask_and_Sub;
+  bitwise_and(ab, dest_erode, mask_and_Sub);
+
 
   Mat dest_lab;
   cvtColor(dest,dest_lab,CV_BGR2Lab);
@@ -561,12 +656,30 @@ Mat ComputerVision::remove_background(const Mat& img, const Mat& blank, int blur
   Mat pot_erode;
   erode(pot_dilate,pot_erode, Mat(), Point(-1, -1), 3, 1, 1);
   Mat pot_and;
-  bitwise_and(pot_erode,dest_erode,pot_and);
+  bitwise_and(pot_erode,mask_and_Sub,pot_and);
   Mat pot_roi;
 
   vector<Point> cc_pot = keep_roi(pot_and,Point(x1,y1),Point(x2,y2),pot_roi);
 
-  return pot_roi;
+  Mat inputImage_lab;
+  cvtColor(adjImg, inputImage_lab, CV_BGR2Lab);
+  vector<Mat> img_channels_lab;
+  split(inputImage_lab, img_channels_lab);
+  Mat b_thresh;
+  inRange(img_channels_lab[2],80,115,b_thresh);
+  Mat b_er;
+  erode(b_thresh,b_er, Mat(), Point(-1, -1), 1, 1, 1);
+  Mat b_roi;
+  vector<Point> cc1 = keep_roi(b_er,Point(x1,y1),Point(x2,y2),b_roi);
+  Mat b_dil;
+  dilate(b_roi,b_dil,Mat(),Point(-1, -1), 6, 1, 1);
+  Mat b_xor = pot_roi - b_dil;
+
+
+  Mat mask;
+  vector<Point> cc = keep_roi(b_xor,Point(x1,y2),Point(x1,y2),mask);
+
+  return mask;
 
 }
 
@@ -574,5 +687,208 @@ vector<Point> ComputerVision::get_cc(Mat img,int x1, int y1, int x2, int y2){
     Mat temp;
     vector<Point> cc_pot = keep_roi(std::move(img),Point(x1,y1),Point(x2,y2),temp);
     return cc_pot;
+
+}
+
+vector<int> ComputerVision::getTips(const Mat &img){
+
+  medianBlur(img, img, 3);
+
+
+      Mat thinning_dilate;
+      dilate(img, thinning_dilate, Mat(), Point(-1, -1), 3, 1, 1);
+      Mat thinning_erode;
+      erode(thinning_dilate,thinning_erode, Mat(), Point(-1, -1), 1, 1, 1);
+
+      thinning(thinning_erode,thinning_erode );
+
+      // Declare variable to count neighbourhood pixels
+      int count;
+
+      // To store a pixel intensity
+      uchar pix;
+
+      // To store the ending co-ordinates
+      std::vector<int> coords;
+
+      // For each pixel in our image...
+      for (int i = 1; i < thinning_erode.rows-1; i++) {
+          for (int j = 1; j < thinning_erode.cols-1; j++) {
+
+              // See what the pixel is at this location
+              pix = thinning_erode.at<uchar>(i,j);
+
+              // If not a skeleton point, skip
+              if (pix == 0)
+                  continue;
+
+              // Reset counter
+              count = 0;
+
+              // For each pixel in the neighbourhood
+              // centered at this skeleton location...
+              for (int y = -1; y <= 1; y++) {
+                  for (int x = -1; x <= 1; x++) {
+
+                      // Get the pixel in the neighbourhood
+                      pix = thinning_erode.at<uchar>(i+y,j+x);
+
+                      // Count if non-zero
+                      if (pix != 0)
+                          count++;
+                  }
+              }
+
+              // If count is exactly 2, add co-ordinates to vector
+              if (count == 2) {
+                  coords.push_back(i);
+                  coords.push_back(j);
+              }
+
+          }
+      }
+
+      std::vector<int> coordsX;
+      std::vector<int> coordsY;
+      for (int i = 0; i < coords.size() / 2; i++){
+          int x = coords.at(2*i);
+          int y = coords.at(2*i+1);
+          coordsX.push_back(x);
+          coordsY.push_back(y);
+      }
+
+      int size = coordsX.size();
+      for (int i = 0; i < size-1; ++i)
+      {
+          if (size != (int)coordsX.size())
+          {
+              --i;
+              size = coordsX.size();
+              printf("Go back %d\n",size);
+          }
+          assert(i > -1 && i < (int)coordsX.size());
+          if(coordsX[i] + 5 >= coordsX[i+1])
+          {
+              printf("Removing %d, %d\n",coordsX[i],i);
+              coordsX.erase(coordsX.begin() + i);
+              coordsY.erase(coordsY.begin()+i);
+          }
+
+
+      }
+
+      std::vector<int> coordsXY;
+
+
+      for (int i = 0; i< size; ++i){
+          cout << coordsX.at(i) << ","<<coordsY.at(i)<<"\n";
+          coordsXY.push_back(coordsX.at(i));
+          coordsXY.push_back(coordsY.at(i));
+      }
+
+      return coordsXY;
+
+}
+
+vector<int> ComputerVision::getNodes(const Mat &img){
+
+  medianBlur(img, img, 3);
+
+
+      Mat thinning_dilate;
+      dilate(img, thinning_dilate, Mat(), Point(-1, -1), 3, 1, 1);
+      Mat thinning_erode;
+      erode(thinning_dilate,thinning_erode, Mat(), Point(-1, -1), 1, 1, 1);
+
+      thinning(thinning_erode,thinning_erode );
+
+
+
+      // Declare variable to count neighbourhood pixels
+      int count;
+
+      // To store a pixel intensity
+      uchar pix;
+
+      // To store the ending co-ordinates
+      std::vector<int> coords;
+
+      // For each pixel in our image...
+      for (int i = 1; i < thinning_erode.rows-1; i++) {
+          for (int j = 1; j < thinning_erode.cols-1; j++) {
+
+              // See what the pixel is at this location
+              pix = thinning_erode.at<uchar>(i,j);
+
+              // If not a skeleton point, skip
+              if (pix == 0)
+                  continue;
+
+              // Reset counter
+              count = 0;
+
+              // For each pixel in the neighbourhood
+              // centered at this skeleton location...
+              for (int y = -1; y <= 1; y++) {
+                  for (int x = -1; x <= 1; x++) {
+
+                      // Get the pixel in the neighbourhood
+                      pix = thinning_erode.at<uchar>(i+y,j+x);
+
+                      // Count if non-zero
+                      if (pix != 0)
+                          count++;
+                  }
+              }
+
+              // If count is exactly 4, add co-ordinates to vector
+
+              if (count == 4) {
+                  coords.push_back(i);
+                  coords.push_back(j);
+              }
+
+          }
+      }
+
+      std::vector<int> coordsX;
+      std::vector<int> coordsY;
+      for (int i = 0; i < coords.size() / 2; i++){
+          int x = coords.at(2*i);
+          int y = coords.at(2*i+1);
+          coordsX.push_back(x);
+          coordsY.push_back(y);
+      }
+
+      int size = coordsX.size();
+      for (int i = 0; i < size-1; ++i)
+      {
+          if (size != (int)coordsX.size())
+          {
+              --i;
+              size = coordsX.size();
+              printf("Go back %d\n",size);
+          }
+          assert(i > -1 && i < (int)coordsX.size());
+          if(coordsX[i] + 5 >= coordsX[i+1])
+          {
+              printf("Removing %d, %d\n",coordsX[i],i);
+              coordsX.erase(coordsX.begin() + i);
+              coordsY.erase(coordsY.begin()+i);
+          }
+
+
+      }
+
+      std::vector<int> coordsXY;
+
+
+      for (int i = 0; i< size; ++i){
+          cout << coordsX.at(i) << ","<<coordsY.at(i)<<"\n";
+          coordsXY.push_back(coordsX.at(i));
+          coordsXY.push_back(coordsY.at(i));
+      }
+
+      return coordsXY;
 
 }

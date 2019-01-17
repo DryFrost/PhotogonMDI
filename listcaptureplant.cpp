@@ -458,6 +458,10 @@ void listCapturePlant::on_accept_clicked()
   cv::imwrite(fileNameB,rawFront);
   cv::imwrite(fileNameC,rawSide);
 
+  QTextCursor textCursor = ui->plainTextEdit->textCursor();
+  textCursor.movePosition(QTextCursor::Start,QTextCursor::MoveAnchor,1);
+  ui->plainTextEdit->setTextCursor(textCursor);
+
 
 }
 
