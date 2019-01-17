@@ -225,11 +225,18 @@ void MainWindow::on_actionActivate_Cameras_triggered()
   QString command = "Capture";
   udp->deviceDiscover(command);
 
+  QString FrontCameraIP = mInternal->value("FrontCameraIP").toString();
+  QString SideCameraIP = mInternal->value("SideCameraIP").toString();
+  QString TopCameraIP = mInternal->value("TopCameraIP").toString();
+
+  QStringList ipList;
+  ipList<<FrontCameraIP<<SideCameraIP<<TopCameraIP;
+
   int numCams = 1;
   for(int i = 0; i < numCams; i++)
   {
       threads[i] = new QThread;
-      workers[i] = new Worker(QString("10.0.1.23"),i);
+      workers[i] = new Worker(QString(ipList[i]),i);
 
       workers[i]->moveToThread(threads[i]);
 
