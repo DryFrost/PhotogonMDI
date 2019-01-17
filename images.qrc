@@ -3,5 +3,8 @@
         <file>Images/PhotogonLogoSplasy.png</file>
         <file>Images/dialog-ok-apply.svg</file>
         <file>Images/process-stop.svg</file>
+        <file>Images/CreateNewProject.png</file>
+        <file>Images/OpenNewProject.png</file>
+        <file>Images/DetectCameras.png</file>
     </qresource>
 </RCC>

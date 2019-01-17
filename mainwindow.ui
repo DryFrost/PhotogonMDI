@@ -71,6 +71,12 @@
    <property name="windowTitle">
     <string>toolBar</string>
    </property>
+   <property name="iconSize">
+    <size>
+     <width>100</width>
+     <height>40</height>
+    </size>
+   </property>
    <attribute name="toolBarArea">
     <enum>LeftToolBarArea</enum>
    </attribute>
@@ -103,6 +109,10 @@
    <addaction name="actionDisplay_Histograms"/>
   </widget>
   <action name="actionNew_Project">
+   <property name="icon">
+    <iconset resource="images.qrc">
+     <normaloff>:/icons/Images/CreateNewProject.png</normaloff>:/icons/Images/CreateNewProject.png</iconset>
+   </property>
    <property name="text">
     <string>New Project</string>
    </property>
@@ -112,8 +122,8 @@
   </action>
   <action name="actionOpen_Project">
    <property name="icon">
-    <iconset>
-     <normaloff>:/icons/Images/fileopen.svg</normaloff>:/icons/Images/fileopen.svg</iconset>
+    <iconset resource="images.qrc">
+     <normaloff>:/icons/Images/OpenNewProject.png</normaloff>:/icons/Images/OpenNewProject.png</iconset>
    </property>
    <property name="text">
     <string>Open Project</string>
@@ -214,6 +224,10 @@
    </property>
   </action>
   <action name="actionDetect_Cameras">
+   <property name="icon">
+    <iconset resource="images.qrc">
+     <normaloff>:/icons/Images/DetectCameras.png</normaloff>:/icons/Images/DetectCameras.png</iconset>
+   </property>
    <property name="text">
     <string>Detect Cameras</string>
    </property>
@@ -224,6 +238,8 @@
    </property>
   </action>
  </widget>
- <resources/>
+ <resources>
+  <include location="images.qrc"/>
+ </resources>
  <connections/>
 </ui>
