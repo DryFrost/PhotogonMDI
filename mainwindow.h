@@ -26,6 +26,7 @@
 #include "selectcolorchips.h"
 #include "cameradiscovery.h"
 #include "myudp.h"
+#include "connectcameras.h"
 
 class capturePlant;
 class displayFront;
@@ -39,6 +40,7 @@ class listCapturePlant;
 class QThread;
 class editROI;
 class selectColorChips;
+class connectCameras;
 
 namespace Ui {
   class MainWindow;
@@ -99,6 +101,8 @@ private slots:
 
   void on_actionDetect_Cameras_triggered();
 
+  void on_actionLoad_Cameras_triggered();
+
 private:
   Ui::MainWindow *ui;
 
@@ -116,6 +120,7 @@ private:
   QPointer<listCapturePlant> mListCapturePlant;
   QPointer<editROI> mEditROI;
   QPointer<selectColorChips> mSelectColorChips;
+  QPointer<connectCameras> mConnectCameras;
 
   int numCams;
   QThread* threads[MAX_NUM_CAM];
@@ -134,6 +139,9 @@ private:
 
   QSettings* mInternal;
   QSettings* mProject;
+
+  bool ColorStandardization;
+
 
 
   void loadSubWindow(QWidget *widget);

@@ -75,7 +75,8 @@ SOURCES += \
     selectcolorchips.cpp \
     detectcolorchips.cpp \
     createtargetcolor.cpp \
-    colorchipsmask.cpp
+    colorchipsmask.cpp \
+    connectcameras.cpp
 
 HEADERS += \
     mainwindow.h \
@@ -109,7 +110,8 @@ HEADERS += \
     selectcolorchips.h \
     detectcolorchips.h \
     createtargetcolor.h \
-    colorchipsmask.h
+    colorchipsmask.h \
+    connectcameras.h
 
 FORMS += \
     mainwindow.ui \
@@ -130,7 +132,8 @@ FORMS += \
     displaymask.ui \
     welcomescreen.ui \
     editroi.ui \
-    selectcolorchips.ui
+    selectcolorchips.ui \
+    connectcameras.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

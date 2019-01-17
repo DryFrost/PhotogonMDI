@@ -80,6 +80,7 @@
    <addaction name="actionNew_Project"/>
    <addaction name="actionOpen_Project"/>
    <addaction name="actionDetect_Cameras"/>
+   <addaction name="actionLoad_Cameras"/>
    <addaction name="actionActivate_Cameras"/>
    <addaction name="actionOpen_Camera"/>
    <addaction name="actionDetect_Color_Chips"/>
@@ -215,6 +216,11 @@
   <action name="actionDetect_Cameras">
    <property name="text">
     <string>Detect Cameras</string>
+   </property>
+  </action>
+  <action name="actionLoad_Cameras">
+   <property name="text">
+    <string>Load Cameras</string>
    </property>
   </action>
  </widget>

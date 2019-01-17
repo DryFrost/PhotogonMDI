@@ -6,6 +6,7 @@ cameraSetup::cameraSetup(QWidget *parent) :
   ui(new Ui::cameraSetup)
 {
   ui->setupUi(this);
+
 }
 
 cameraSetup::~cameraSetup()

@@ -1,11 +1,13 @@
 #include "welcomescreen.h"
 #include "ui_welcomescreen.h"
+#include "newproject.h"
 
 welcomeScreen::welcomeScreen(QWidget *parent) :
   QDialog(parent),
   ui(new Ui::welcomeScreen)
 {
   ui->setupUi(this);
+  setWindowFlags(windowFlags() | Qt::WindowStaysOnTopHint);
   mSettings = new QSettings("internal.ini",QSettings::IniFormat);
   ui->checkBox->setChecked(mSettings->value("startupDialog",true).toBool());
   if(mSettings->value("recentFiles").toString().isEmpty()){
@@ -30,8 +32,7 @@ void welcomeScreen::on_commandLinkButton_clicked()
 
 void welcomeScreen::on_commandLinkButton_2_clicked()
 {
-
-
+  new NewProject();
   close();
 }
 

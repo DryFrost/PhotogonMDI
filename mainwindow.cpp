@@ -38,6 +38,7 @@ void MainWindow::loadFile(QString filePath){
       Qr = mProject->value("Qr").toString();
       List = mProject->value("List").toString();
       Manual = mProject->value("Manual").toString();
+      ColorStandardization = mProject->value("Color-Standardization").toBool();
       setRecentFile(filePath);
     }
 }
@@ -248,7 +249,11 @@ void MainWindow::on_actionActivate_Cameras_triggered()
   ui->actionDisplay_Front_Camera->setEnabled(true);
   ui->actionModify_Mask_Properties->setEnabled(true);
   ui->actionModify_Region_of_Intrest->setEnabled(true);
-  ui->actionOpen_Camera->setEnabled(true);
+  if(!ColorStandardization){
+      ui->actionOpen_Camera->setEnabled(true);
+    }
+
+
   ui->actionDetect_Color_Chips->setEnabled(true);
 
 }
@@ -330,9 +335,16 @@ void MainWindow::on_actionDetect_Color_Chips_triggered()
       connect(this,SIGNAL(SendRawFrameSide(cv::Mat)),mSelectColorChips,SLOT(updateMaskSide(cv::Mat)));
       connect(this,SIGNAL(SendRawFrameFront(cv::Mat)),mSelectColorChips,SLOT(updateMaskFront(cv::Mat)));
     }
+  ui->actionOpen_Camera->setEnabled(true);
 }
 
 void MainWindow::on_actionDetect_Cameras_triggered()
 {
     new cameraDiscovery();
+}
+
+void MainWindow::on_actionLoad_Cameras_triggered()
+{
+  mConnectCameras = new connectCameras(this);
+  loadSubWindow(mConnectCameras);
 }
