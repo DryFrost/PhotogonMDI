@@ -15,6 +15,80 @@ using namespace cv;
 using namespace std;
 using namespace Eigen;
 
+float get_fd(Mat mask){
+	Mat img_bc;
+	resize(mask, img_bc, Size(2048,2048), 0, 0, INTER_LINEAR);
+
+	double width = 2048.0;
+	double p = log(width)/log(double(2.0));
+	VectorXf N = VectorXf::Zero(int(p)+1);
+	double sumImg = sum(img_bc)[0];
+	N(int(p)) = sumImg;
+
+	double siz;
+	double siz2;
+	float running_sum;
+    for (int g = int(p)-1; g > 0; g--){
+        siz = pow(2.0, double(p-g));
+        siz2 = round(siz/2.0);
+        running_sum = 0;
+        for (int i = 0; i < int(width-siz+1); i = i+int(siz)){
+                for (int j = 0; j < int(width-siz+1); j = j+int(siz)){
+                        img_bc.at<uchar>(i,j) = (bool(img_bc.at<uchar>(i,j)) || bool(img_bc.at<uchar>(i+siz2,j))
+                                || bool(img_bc.at<uchar>(i,j+siz2)) || bool(img_bc.at<uchar>(i+siz2,j+siz2)));
+                        running_sum = running_sum+float(img_bc.at<uchar>(i,j));
+                }
+        }
+        N(g) = running_sum;
+        }
+    N = N.colwise().reverse().eval();
+
+    VectorXf R = VectorXf::Zero(int(p)+1);
+    R(0) = 1.0;
+    for (int k = 1; k < R.size(); k++){
+        R(k) = pow(2.0, double(k));
+    }
+
+        float slope [R.size()-1];
+        for(int i=1;i < R.size()-1 ;i++){
+                slope[i] = (log10(N(i+1))-log10(N(i)))/(log10(R(i+1))-log10(R(i)));
+        }
+
+	//-- Getting average slope (fractal dimension)
+	float sum = 0.0, average;
+	int s_count =0;
+	for(int i=1; i < R.size()-1; i++){
+		if(-slope[i] < 2 && -slope[i] > 0){
+			sum += -slope[i];
+			s_count++;
+		}
+	}
+	average = sum / s_count;
+	return average;
+}
+
+int is_oof(Mat img){
+	vector<vector<Point> > contours;
+	vector<Vec4i> hierarchy;
+    findContours( img, contours, hierarchy, RETR_TREE, CHAIN_APPROX_SIMPLE, Point(0, 0) );
+
+    Mat src = Mat::zeros(img.size(),img.type())+255;
+
+    vector<vector<Point> > contours_roi;
+    vector<Vec4i> hierarchy_roi;
+    findContours( src, contours_roi, hierarchy_roi, RETR_TREE, CHAIN_APPROX_SIMPLE, Point(0, 0) );
+
+    int check = 0;
+    for(unsigned int i=0; i < contours.size(); i++){
+        for(unsigned int j=0; j<contours[i].size(); j++){
+                int test = pointPolygonTest(contours_roi[0],Point2f(contours[i][j]),false);
+                if(test == 0){
+                        check = 1;
+                }
+        }
+    }
+        return check;
+}
 
 void thinningIteration(cv::Mat& img, int iter)
 {
@@ -47,7 +121,6 @@ void thinningIteration(cv::Mat& img, int iter)
 
     img &= ~marker;
 }
-
 
 void thinning(const cv::Mat& src, cv::Mat& dst)
 {
@@ -231,7 +304,6 @@ Mat color_homography(Mat img, MatrixXd r_coef,MatrixXd g_coef,MatrixXd b_coef){
     return adjImage;
 }
 
-
 Mat fill_holes(Mat src){
     Mat dst = Mat::zeros(src.size(),src.type());
     vector<vector<Point>>contours;
@@ -242,6 +314,7 @@ Mat fill_holes(Mat src){
     }
     return dst;
 }
+
 vector<Point> keep_roi(Mat img,const Point& tl, const Point& br, Mat &mask){
     //-- Get contours of mask
     vector<vector<Point> > contours;
@@ -277,6 +350,7 @@ vector<Point> keep_roi(Mat img,const Point& tl, const Point& br, Mat &mask){
     mask = kept_mask;
     return cc;
 }
+
 vector<double> ComputerVision::get_shapes(const vector<Point>& cc,const Mat& mask){
     //-- Get measurements
     Moments mom = moments(mask,true);
@@ -320,8 +394,10 @@ vector<double> ComputerVision::get_shapes(const vector<Point>& cc,const Mat& mas
         round = eminor/emajor;
         ar = emajor/eminor;
     }
-    double shapes[20] = {area,hull_area,solidity,perimeter,width,height,cmx,cmy,hull_verticies,ex,ey,emajor,eminor,angle,eccen,circ,round,ar,x,y};
-    vector<double> shapes_v(shapes,shapes+20);
+    float fd = get_fd(mask);
+    double oof = is_oof(mask);
+    double shapes[22] = {area,hull_area,solidity,perimeter,width,height,cmx,cmy,hull_verticies,ex,ey,emajor,eminor,angle,eccen,circ,round,ar,x,y,fd,oof};
+    vector<double> shapes_v(shapes,shapes+22);
     return shapes_v;
 }
 
@@ -354,6 +430,7 @@ Mat ComputerVision::get_color_Hue(const Mat& img,const Mat& mask){
 
     return hist;
 }
+
 Mat ComputerVision::get_color_Saturation(const Mat& img,const Mat& mask){
     Mat composite;
     cvtColor(img,composite,COLOR_BGR2HSV);
@@ -370,6 +447,7 @@ Mat ComputerVision::get_color_Saturation(const Mat& img,const Mat& mask){
 
     return hist;
 }
+
 Mat ComputerVision::get_color_Value(const Mat& img,const Mat& mask){
     Mat composite;
     cvtColor(img,composite,COLOR_BGR2HSV);
@@ -386,6 +464,7 @@ Mat ComputerVision::get_color_Value(const Mat& img,const Mat& mask){
 
     return hist;
 }
+
 Mat ComputerVision::get_color_R(const Mat& img,const Mat& mask){
     Mat composite;
     cvtColor(img,composite,COLOR_BGR2RGB);
@@ -402,6 +481,7 @@ Mat ComputerVision::get_color_R(const Mat& img,const Mat& mask){
 
     return hist;
 }
+
 Mat ComputerVision::get_color_G(const Mat& img,const Mat& mask){
     Mat composite;
     cvtColor(img,composite,COLOR_BGR2RGB);
@@ -418,6 +498,7 @@ Mat ComputerVision::get_color_G(const Mat& img,const Mat& mask){
 
     return hist;
 }
+
 Mat ComputerVision::get_color_B(const Mat& img,const Mat& mask){
     Mat composite;
     cvtColor(img,composite,COLOR_BGR2RGB);
@@ -434,6 +515,7 @@ Mat ComputerVision::get_color_B(const Mat& img,const Mat& mask){
 
     return hist;
 }
+
 Mat ComputerVision::get_color_L(const Mat& img,const Mat& mask){
     Mat composite;
     cvtColor(img,composite,COLOR_BGR2Lab);
@@ -450,6 +532,7 @@ Mat ComputerVision::get_color_L(const Mat& img,const Mat& mask){
 
     return hist;
 }
+
 Mat ComputerVision::get_color_GM(const Mat& img,const Mat& mask){
     Mat composite;
     cvtColor(img,composite,COLOR_BGR2Lab);
@@ -466,6 +549,7 @@ Mat ComputerVision::get_color_GM(const Mat& img,const Mat& mask){
 
     return hist;
 }
+
 Mat ComputerVision::get_color_BY(const Mat& img,const Mat& mask){
     Mat composite;
     cvtColor(img,composite,COLOR_BGR2Lab);
@@ -563,7 +647,8 @@ Mat ComputerVision::get_RGB_HIST(const Mat& img, const Mat& mask){
 
 }
 
-Mat ComputerVision::remove_background(const Mat& img, const Mat& blank, int blurKM,int tLowM,int tHighM,int b1LM,int b1HM,int b2LM,int b2HM,int x1, int y1, int x2, int y2, QString CurrentView, bool ColorStandardization ){
+Mat ComputerVision::remove_background(const Mat& img, const Mat& blank, int blurKM,int tLowM,int tHighM,int b1LM,int b1HM,int b2LM,int b2HM,int x1,
+                                      int y1, int x2, int y2, QString CurrentView, bool ColorStandardization ){
 
   Mat adjImg;
 
