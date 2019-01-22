@@ -648,7 +648,9 @@ Mat ComputerVision::get_RGB_HIST(const Mat& img, const Mat& mask){
 }
 
 Mat ComputerVision::remove_background(const Mat& img, const Mat& blank, int blurKM,int tLowM,int tHighM,int b1LM,int b1HM,int b2LM,int b2HM,int x1,
-                                      int y1, int x2, int y2, QString CurrentView, bool ColorStandardization ){
+                                      int y1, int x2, int y2, QString CurrentView, bool ColorStandardization,int BluePlantThreshold, int BluePlantBlur, int GreenPlantThreshold, int GreenPlantBlur, int MaskAlphaThresholdDark,
+                                      int MaskAlphaThresholdLight,int MaskBetaThreshold,int DifferenceDilateKernelSize, int DifferenceErodeKernelSize,
+                                      int PotDilateKernelSize, int PotErodeKernelSize){
 
   Mat adjImg;
 
@@ -669,14 +671,15 @@ Mat ComputerVision::remove_background(const Mat& img, const Mat& blank, int blur
       adjImg = img;
     }
 
+
   Mat lab;
   Mat adjImage1 = adjImg.clone();
   cvtColor(adjImage1, lab, cv::COLOR_BGR2Lab);
   vector<Mat> split_lab;
   split(lab,split_lab);
   Mat mask_b;
-  threshold(split_lab[2], mask_b, 130, 255,THRESH_BINARY);
-  medianBlur(mask_b, mask_b, 5);
+  threshold(split_lab[2], mask_b, BluePlantThreshold, 255,THRESH_BINARY);
+  medianBlur(mask_b, mask_b, BluePlantBlur);
   mask_b=fill_holes(mask_b);
 
   Mat hsv;
@@ -684,8 +687,8 @@ Mat ComputerVision::remove_background(const Mat& img, const Mat& blank, int blur
   vector<Mat> split_hsv;
   split(hsv, split_hsv);
   Mat mask_s;
-  threshold(split_hsv[1], mask_s, 85, 255, THRESH_BINARY);
-  medianBlur(mask_s, mask_s, 5);
+  threshold(split_hsv[1], mask_s, GreenPlantThreshold, 255, THRESH_BINARY);
+  medianBlur(mask_s, mask_s, GreenPlantBlur);
   mask_s=fill_holes(mask_s);
 
   Mat mask_erode;
@@ -698,11 +701,11 @@ Mat ComputerVision::remove_background(const Mat& img, const Mat& blank, int blur
   vector<Mat> split_lab_a;
   split(masked_a,split_lab_a);
   Mat maskeda_thresh;
-  threshold(split_lab_a[1], maskeda_thresh, 115, 255, THRESH_BINARY_INV);
+  threshold(split_lab_a[1], maskeda_thresh, MaskAlphaThresholdDark, 255, THRESH_BINARY_INV);
   Mat maskeda_thresh1;
-  threshold(split_lab_a[1], maskeda_thresh1, 135, 255, THRESH_BINARY);
+  threshold(split_lab_a[1], maskeda_thresh1, MaskAlphaThresholdLight, 255, THRESH_BINARY);
   Mat maskedb_thresh;
-  threshold(split_lab_a[2], maskedb_thresh, 128, 255, THRESH_BINARY);
+  threshold(split_lab_a[2], maskedb_thresh, MaskBetaThreshold, 255, THRESH_BINARY);
   Mat ab1;
   Mat ab;
   bitwise_or(maskeda_thresh, maskedb_thresh, ab1);
@@ -718,9 +721,9 @@ Mat ComputerVision::remove_background(const Mat& img, const Mat& blank, int blur
   Mat dest_thresh;
   threshold(dest_blur,dest_thresh,tLowM,tHighM,THRESH_BINARY);
   Mat dest_dilate;
-  dilate(dest_thresh,dest_dilate,Mat(), Point(-1,-1),5,1,1);
+  dilate(dest_thresh,dest_dilate,Mat(), Point(-1,-1),DifferenceDilateKernelSize,1,1);
   Mat dest_erode;
-  erode(dest_dilate,dest_erode,Mat(),Point(-1,-1),5,1,1);
+  erode(dest_dilate,dest_erode,Mat(),Point(-1,-1),DifferenceErodeKernelSize,1,1);
 
   Mat mask_and_Sub;
   bitwise_and(ab, dest_erode, mask_and_Sub);
@@ -737,9 +740,9 @@ Mat ComputerVision::remove_background(const Mat& img, const Mat& blank, int blur
   Mat pot_or;
   bitwise_or(pot_thresh1,pot_thresh2,pot_or);
   Mat pot_dilate;
-  dilate(pot_or, pot_dilate, Mat(), Point(-1, -1), 2, 1, 1);
+  dilate(pot_or, pot_dilate, Mat(), Point(-1, -1), PotDilateKernelSize, 1, 1);
   Mat pot_erode;
-  erode(pot_dilate,pot_erode, Mat(), Point(-1, -1), 3, 1, 1);
+  erode(pot_dilate,pot_erode, Mat(), Point(-1, -1), PotErodeKernelSize, 1, 1);
   Mat pot_and;
   bitwise_and(pot_erode,mask_and_Sub,pot_and);
   Mat pot_roi;

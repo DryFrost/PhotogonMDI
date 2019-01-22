@@ -108,6 +108,42 @@ private:
   int x2Top;
   int y2Top;
 
+  int BluePlantThresholdFront;
+  int BluePlantBlurFront;
+  int GreenPlantThresholdFront;
+  int GreenPlantBlurFront;
+  int MaskAlphaThresholdDarkFront;
+  int MaskAlphaThresholdLightFront;
+  int MaskBetaThresholdFront;
+  int DifferenceDilateKernelSizeFront;
+  int DifferenceErodeKernelSizeFront;
+  int PotDilateKernelSizeFront;
+  int PotErodeKernelSizeFront;
+
+  int BluePlantThresholdSide;
+  int BluePlantBlurSide;
+  int GreenPlantThresholdSide;
+  int GreenPlantBlurSide;
+  int MaskAlphaThresholdDarkSide;
+  int MaskAlphaThresholdLightSide;
+  int MaskBetaThresholdSide;
+  int DifferenceDilateKernelSizeSide;
+  int DifferenceErodeKernelSizeSide;
+  int PotDilateKernelSizeSide;
+  int PotErodeKernelSizeSide;
+
+  int BluePlantThresholdTop;
+  int BluePlantBlurTop;
+  int GreenPlantThresholdTop;
+  int GreenPlantBlurTop;
+  int MaskAlphaThresholdDarkTop;
+  int MaskAlphaThresholdLightTop;
+  int MaskBetaThresholdTop;
+  int DifferenceDilateKernelSizeTop;
+  int DifferenceErodeKernelSizeTop;
+  int PotDilateKernelSizeTop;
+  int PotErodeKernelSizeTop;
+
   bool ColorStandardization;
   bool Area;
   bool HullArea;

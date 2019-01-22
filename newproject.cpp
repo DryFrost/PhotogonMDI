@@ -134,6 +134,53 @@ void NewProject::on_pushButton_4_clicked()
   setup.setValue("a",QVariant::fromValue(a));
   setup.setValue("b",QVariant::fromValue(a));
 
+  int BluePlantThreshold =130;
+  int BluePlantBlur =5;
+  int GreenPlantThreshold=85;
+  int GreenPlantBlur=5;
+  int MaskAlphaThresholdDark=115;
+  int MaskAlphaThresholdLight=135;
+  int MaskBetaThreshold=128;
+  int DifferenceDilateKernelSize=5;
+  int DifferenceErodeKernelSize=5;
+  int PotDilateKernelSize=2;
+  int PotErodeKernelSize=3;
+
+  setup.setValue("BluePlantThresholdFront",QVariant::fromValue(BluePlantThreshold));
+  setup.setValue("BluePlantBlurFront",QVariant::fromValue(BluePlantBlur));
+  setup.setValue("GreenPlantThresholdFront",QVariant::fromValue(GreenPlantThreshold));
+  setup.setValue("GreenPlantBlurFront",QVariant::fromValue(GreenPlantBlur));
+  setup.setValue("MaskAlphaThresholdDarkFront",QVariant::fromValue(MaskAlphaThresholdDark));
+  setup.setValue("MaskAlphaThresholdLightFront",QVariant::fromValue(MaskAlphaThresholdLight));
+  setup.setValue("MaskBetaThresholdFront",QVariant::fromValue(MaskBetaThreshold));
+  setup.setValue("DifferenceDilateKernelSizeFront",QVariant::fromValue(DifferenceDilateKernelSize));
+  setup.setValue("DifferenceErodeKernelSizeFront",QVariant::fromValue(DifferenceErodeKernelSize));
+  setup.setValue("PotDilateKernelSizeFront",QVariant::fromValue(PotDilateKernelSize));
+  setup.setValue("PotErodeKernelSizeFront",QVariant::fromValue(PotErodeKernelSize));
+
+  setup.setValue("BluePlantThresholdSide",QVariant::fromValue(BluePlantThreshold));
+  setup.setValue("BluePlantBlurSide",QVariant::fromValue(BluePlantBlur));
+  setup.setValue("GreenPlantThresholdSide",QVariant::fromValue(GreenPlantThreshold));
+  setup.setValue("GreenPlantBlurSide",QVariant::fromValue(GreenPlantBlur));
+  setup.setValue("MaskAlphaThresholdDarkSide",QVariant::fromValue(MaskAlphaThresholdDark));
+  setup.setValue("MaskAlphaThresholdLightSide",QVariant::fromValue(MaskAlphaThresholdLight));
+  setup.setValue("MaskBetaThresholdSide",QVariant::fromValue(MaskBetaThreshold));
+  setup.setValue("DifferenceDilateKernelSizeSide",QVariant::fromValue(DifferenceDilateKernelSize));
+  setup.setValue("DifferenceErodeKernelSizeSide",QVariant::fromValue(DifferenceErodeKernelSize));
+  setup.setValue("PotDilateKernelSizeSide",QVariant::fromValue(PotDilateKernelSize));
+  setup.setValue("PotErodeKernelSizeSide",QVariant::fromValue(PotErodeKernelSize));
+
+  setup.setValue("BluePlantThresholdTop",QVariant::fromValue(BluePlantThreshold));
+  setup.setValue("BluePlantBlurTop",QVariant::fromValue(BluePlantBlur));
+  setup.setValue("GreenPlantThresholdTop",QVariant::fromValue(GreenPlantThreshold));
+  setup.setValue("GreenPlantBlurTop",QVariant::fromValue(GreenPlantBlur));
+  setup.setValue("MaskAlphaThresholdDarkTop",QVariant::fromValue(MaskAlphaThresholdDark));
+  setup.setValue("MaskAlphaThresholdLightTop",QVariant::fromValue(MaskAlphaThresholdLight));
+  setup.setValue("MaskBetaThresholdTop",QVariant::fromValue(MaskBetaThreshold));
+  setup.setValue("DifferenceDilateKernelSizeTop",QVariant::fromValue(DifferenceDilateKernelSize));
+  setup.setValue("DifferenceErodeKernelSizeTop",QVariant::fromValue(DifferenceErodeKernelSize));
+  setup.setValue("PotDilateKernelSizeTop",QVariant::fromValue(PotDilateKernelSize));
+  setup.setValue("PotErodeKernelSizeTop",QVariant::fromValue(PotErodeKernelSize));
 
   QString Qr;
   QString List;

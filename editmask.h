@@ -6,7 +6,16 @@
 #include <QTimer>
 #include <opencv2/imgproc.hpp>
 #include <QSettings>
-
+#include <opencv2/features2d.hpp>
+#include <iostream>
+#include <fstream>
+#include <cstdio>
+#include <string>
+#include <utility>
+#include <cmath>
+#include <Eigen/Dense>
+#include <QSettings>
+#include <QFile>
 
 namespace Ui {
   class editMask;
@@ -69,6 +78,24 @@ private:
   int b2LM;
   int b2HM;
   int blurKM;
+
+  int BluePlantThreshold;
+  int BluePlantBlur;
+  int GreenPlantThreshold;
+  int GreenPlantBlur;
+  int MaskAlphaThresholdDark;
+  int MaskAlphaThresholdLight;
+  int MaskBetaThreshold;
+  int DifferenceDilateKernelSize;
+  int DifferenceErodeKernelSize;
+  int PotDilateKernelSize;
+  int PotErodeKernelSize;
+
+  int x1;
+  int y1;
+  int x2;
+  int y2;
+
 
   QString ProjectDir;
   QString ProjectName;

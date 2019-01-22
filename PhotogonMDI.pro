@@ -40,7 +40,15 @@ CONFIG += c++1z
 
 3QMAKE_CXXFLAGS += -std=c++17
 
+QMAKE_CXXFLAGS_RELEASE -= -O1
+
+QMAKE_CXXFLAGS_RELEASE -= -O2
+
+QMAKE_CXXFLAGS_RELEASE += -O3
+
 CONFIG += sdk_no_version_check
+
+
 
 SOURCES += \
         main.cpp \
