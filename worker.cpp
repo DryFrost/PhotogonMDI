@@ -21,24 +21,26 @@ Worker::~Worker()
 void Worker::readVideo(const QString path)
 {
     if (path.length() > 0)
-        filepath = path;
+        filepath = "192.168.0.36";
 
+    filepath = "192.168.0.36";
     QByteArray temp = filepath.toLocal8Bit();
     char* serverIP = temp.data();
 
     int sokt;
     int serverPort;
 
-    serverPort = atoi("4097");
+    serverPort = atoi("4098");
 
 
 
     struct  sockaddr_in serverAddr;
-    socklen_t           addrLen = sizeof(struct sockaddr_in);
+    socklen_t addrLen = sizeof(struct sockaddr_in);
 
     if ((sokt = socket(PF_INET, SOCK_STREAM, 0)) < 0) {
         std::cerr << "socket() failed" << std::endl;
     }
+
 
     serverAddr.sin_family = PF_INET;
     serverAddr.sin_addr.s_addr = inet_addr(serverIP);
@@ -49,9 +51,7 @@ void Worker::readVideo(const QString path)
        }
 
     Mat img;
-
     img = Mat::zeros(FRAME_HEIGHT,FRAME_WIDTH,CV_8UC3);
-
     int imgSize = img.total()*img.elemSize();
     //uchar sockData[imgSize];
     uchar *iptr = img.data;
@@ -78,10 +78,9 @@ void Worker::readVideo(const QString path)
         emit frameFinished(img.clone(), index);
 
 
-        //QThread::msleep(100);
+        QThread::msleep(10);
     }
 
 
     emit finished(index);
 }
-

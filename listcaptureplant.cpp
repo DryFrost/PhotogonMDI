@@ -30,7 +30,6 @@ listCapturePlant::listCapturePlant(QWidget *parent) :
   treatmentNumList = setup.value("treatmentNumList").value<QStringList>();
   model = setup.value("model").value<QStringList>();
 
-
   numList = list2IntA(treatmentNumList);
 
   FtLowM = setup.value("FtLowM").value<int>();
@@ -77,40 +76,40 @@ listCapturePlant::listCapturePlant(QWidget *parent) :
   b = setup.value("b").value<int>();
 
   BluePlantThresholdFront = setup.value("BluePlantThresholdFront").value<int>();
-  BluePlantBlurFront = setup.value("BluePlantThresholdFront").value<int>();
-  GreenPlantThresholdFront = setup.value("BluePlantThresholdFront").value<int>();
-  GreenPlantBlurFront = setup.value("BluePlantThresholdFront").value<int>();
-  MaskAlphaThresholdDarkFront = setup.value("BluePlantThresholdFront").value<int>();
-  MaskAlphaThresholdLightFront = setup.value("BluePlantThresholdFront").value<int>();
-  MaskBetaThresholdFront = setup.value("BluePlantThresholdFront").value<int>();
-  DifferenceDilateKernelSizeFront = setup.value("BluePlantThresholdFront").value<int>();
-  DifferenceErodeKernelSizeFront = setup.value("BluePlantThresholdFront").value<int>();
-  PotDilateKernelSizeFront = setup.value("BluePlantThresholdFront").value<int>();
-  PotErodeKernelSizeFront = setup.value("BluePlantThresholdFront").value<int>();
+  BluePlantBlurFront = setup.value("BluePlantBlurFront").value<int>();
+  GreenPlantThresholdFront = setup.value("GreenPlantThresholdFront").value<int>();
+  GreenPlantBlurFront = setup.value("GreenPlantBlurFront").value<int>();
+  MaskAlphaThresholdDarkFront = setup.value("MaskAlphaThresholdDarkFront").value<int>();
+  MaskAlphaThresholdLightFront = setup.value("MaskAlphaThresholdLightFront").value<int>();
+  MaskBetaThresholdFront = setup.value("MaskBetaThresholdFront").value<int>();
+  DifferenceDilateKernelSizeFront = setup.value("DifferenceDilateKernelSizeFront").value<int>();
+  DifferenceErodeKernelSizeFront = setup.value("DifferenceErodeKernelSizeFront").value<int>();
+  PotDilateKernelSizeFront = setup.value("PotDilateKernelSizeFront").value<int>();
+  PotErodeKernelSizeFront = setup.value("PotErodeKernelSizeFront").value<int>();
 
   BluePlantThresholdSide = setup.value("BluePlantThresholdSide").value<int>();
-  BluePlantBlurSide = setup.value("BluePlantThresholdSide").value<int>();
-  GreenPlantThresholdSide = setup.value("BluePlantThresholdSide").value<int>();
-  GreenPlantBlurSide = setup.value("BluePlantThresholdSide").value<int>();
-  MaskAlphaThresholdDarkSide = setup.value("BluePlantThresholdSide").value<int>();
-  MaskAlphaThresholdLightSide = setup.value("BluePlantThresholdSide").value<int>();
-  MaskBetaThresholdSide = setup.value("BluePlantThresholdSide").value<int>();
-  DifferenceDilateKernelSizeSide = setup.value("BluePlantThresholdSide").value<int>();
-  DifferenceErodeKernelSizeSide = setup.value("BluePlantThresholdSide").value<int>();
-  PotDilateKernelSizeSide = setup.value("BluePlantThresholdSide").value<int>();
-  PotErodeKernelSizeSide = setup.value("BluePlantThresholdSide").value<int>();
+  BluePlantBlurSide = setup.value("BluePlantBlurSide").value<int>();
+  GreenPlantThresholdSide = setup.value("GreenPlantThresholdSide").value<int>();
+  GreenPlantBlurSide = setup.value("GreenPlantBlurSide").value<int>();
+  MaskAlphaThresholdDarkSide = setup.value("MaskAlphaThresholdDarkSide").value<int>();
+  MaskAlphaThresholdLightSide = setup.value("MaskAlphaThresholdLightSide").value<int>();
+  MaskBetaThresholdSide = setup.value("MaskBetaThresholdSide").value<int>();
+  DifferenceDilateKernelSizeSide = setup.value("DifferenceDilateKernelSizeSide").value<int>();
+  DifferenceErodeKernelSizeSide = setup.value("DifferenceErodeKernelSizeSide").value<int>();
+  PotDilateKernelSizeSide = setup.value("PotDilateKernelSizeSide").value<int>();
+  PotErodeKernelSizeSide = setup.value("PotErodeKernelSizeSide").value<int>();
 
   BluePlantThresholdTop = setup.value("BluePlantThresholdTop").value<int>();
-  BluePlantBlurTop = setup.value("BluePlantThresholdTop").value<int>();
-  GreenPlantThresholdTop = setup.value("BluePlantThresholdTop").value<int>();
-  GreenPlantBlurTop = setup.value("BluePlantThresholdTop").value<int>();
-  MaskAlphaThresholdDarkTop = setup.value("BluePlantThresholdTop").value<int>();
-  MaskAlphaThresholdLightTop = setup.value("BluePlantThresholdTop").value<int>();
-  MaskBetaThresholdTop = setup.value("BluePlantThresholdTop").value<int>();
-  DifferenceDilateKernelSizeTop = setup.value("BluePlantThresholdTop").value<int>();
-  DifferenceErodeKernelSizeTop = setup.value("BluePlantThresholdTop").value<int>();
-  PotDilateKernelSizeTop = setup.value("BluePlantThresholdTop").value<int>();
-  PotErodeKernelSizeTop = setup.value("BluePlantThresholdTop").value<int>();
+  BluePlantBlurTop = setup.value("BluePlantBlurTop").value<int>();
+  GreenPlantThresholdTop = setup.value("GreenPlantThresholdTop").value<int>();
+  GreenPlantBlurTop = setup.value("GreenPlantBlurTop").value<int>();
+  MaskAlphaThresholdDarkTop = setup.value("MaskAlphaThresholdDarkTop").value<int>();
+  MaskAlphaThresholdLightTop = setup.value("MaskAlphaThresholdLightTop").value<int>();
+  MaskBetaThresholdTop = setup.value("MaskBetaThresholdTop").value<int>();
+  DifferenceDilateKernelSizeTop = setup.value("DifferenceDilateKernelSizeTop").value<int>();
+  DifferenceErodeKernelSizeTop = setup.value("DifferenceErodeKernelSizeTop").value<int>();
+  PotDilateKernelSizeTop = setup.value("PotDilateKernelSizeTop").value<int>();
+  PotErodeKernelSizeTop = setup.value("PotErodeKernelSizeTop").value<int>();
 
   ColorStandardization = setup.value("Color-Standardization").value<bool>();
   Area = setup.value("Area").value<bool>();
@@ -136,7 +135,6 @@ listCapturePlant::listCapturePlant(QWidget *parent) :
 
   QString instructions;
   instructions = "Clear the chamber";
-  //instructions = "Please Load "+treatmentList[a]+" "+model[b];
   ui->instructions->setText(instructions);
 }
 
@@ -217,13 +215,16 @@ void listCapturePlant::on_capturePlant_clicked()
                                     ColorStandardization,BluePlantThresholdSide,BluePlantBlurSide,GreenPlantThresholdSide,GreenPlantBlurSide,MaskAlphaThresholdDarkSide,MaskAlphaThresholdLightSide,
                                     MaskBetaThresholdSide,DifferenceDilateKernelSizeSide,DifferenceErodeKernelSizeSide,PotDilateKernelSizeSide,PotErodeKernelSizeSide);
 
+  qDebug() << "Finished Removal of BG";
   std::vector<Point> ccFront = cvA.get_cc(noFBG,x1Front,y1Front,x2Front,y2Front);
   std::vector<Point> ccTop = cvA.get_cc(noTBG,x1Top,y1Top,x2Top,y2Top);
   std::vector<Point> ccSide = cvA.get_cc(noSBG,x1Side,y1Side,x2Side,y2Side);
+  qDebug() << "Finished Getting CC";
 
   shapesTop = cvA.get_shapes(ccTop,noTBG);
   shapesFront = cvA.get_shapes(ccFront,noFBG);
   shapesSide = cvA.get_shapes(ccSide,noSBG);
+  qDebug() << "Finished Capturing of Shape Info";
 
   Mat shapesImageTop = cvA.drawShapes(accTop,ccTop);
   Mat shapesImageFront = cvA.drawShapes(accFront,ccFront);
@@ -264,6 +265,8 @@ void listCapturePlant::on_capturePlant_clicked()
   TopcolorSaturation=cvA.get_color_Saturation(accTop,noTBG);
   TopcolorValue=cvA.get_color_Value(accTop,noTBG);
 
+  //imwrite("/Users/dnguyen/Desktop/mask.png",noFBG);
+
   emit sendShapeTop(shapesImageTop);
   emit sendShapeFront(shapesImageFront);
   emit sendShapeSide(shapesImageSide);
@@ -301,7 +304,6 @@ void listCapturePlant::on_accept_clicked()
       a=0;
       b=0;
     }
-  qDebug()<<a<<b;
 
 
   QString fileDir = ProjectDir+"/Data/";

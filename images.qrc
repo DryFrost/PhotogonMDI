@@ -6,5 +6,9 @@
         <file>Images/CreateNewProject.png</file>
         <file>Images/OpenNewProject.png</file>
         <file>Images/DetectCameras.png</file>
+        <file>Images/ActivateCameras.png</file>
+        <file>Images/LoadCameras.png</file>
+        <file>Images/FrontView.png</file>
+        <file>Images/TopView.png</file>
     </qresource>
 </RCC>

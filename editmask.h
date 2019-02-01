@@ -71,6 +71,8 @@ private:
   cv::Mat currentFrame;
   cv::Mat blank;
 
+  bool ColorStandardization;
+
   int tLowM;
   int tHighM;
   int b1LM;

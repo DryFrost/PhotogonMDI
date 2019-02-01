@@ -10,6 +10,7 @@
 #include <Eigen/Dense>
 #include <QSettings>
 #include <QFile>
+#include <QDebug>
 
 using namespace cv;
 using namespace std;
@@ -654,7 +655,7 @@ Mat ComputerVision::remove_background(const Mat& img, const Mat& blank, int blur
 
   Mat adjImg;
 
-  if(ColorStandardization){
+  if(ColorStandardization==true){
 
 
 
@@ -667,9 +668,10 @@ Mat ComputerVision::remove_background(const Mat& img, const Mat& blank, int blur
       adjImg = color_homography(img,rh,gh,bh);
 
     }
-  if(!ColorStandardization){
+  if(ColorStandardization==false){
       adjImg = img;
     }
+
 
 
   Mat lab;
@@ -746,7 +748,6 @@ Mat ComputerVision::remove_background(const Mat& img, const Mat& blank, int blur
   Mat pot_and;
   bitwise_and(pot_erode,mask_and_Sub,pot_and);
   Mat pot_roi;
-
   vector<Point> cc_pot = keep_roi(pot_and,Point(x1,y1),Point(x2,y2),pot_roi);
 
   Mat inputImage_lab;
@@ -764,10 +765,12 @@ Mat ComputerVision::remove_background(const Mat& img, const Mat& blank, int blur
   Mat b_xor = pot_roi - b_dil;
 
 
+
+
   Mat mask;
   vector<Point> cc = keep_roi(b_xor,Point(x1,y2),Point(x1,y2),mask);
 
-  return mask;
+  return pot_and;
 
 }
 

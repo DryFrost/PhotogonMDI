@@ -40,12 +40,6 @@ CONFIG += c++1z
 
 3QMAKE_CXXFLAGS += -std=c++17
 
-QMAKE_CXXFLAGS_RELEASE -= -O1
-
-QMAKE_CXXFLAGS_RELEASE -= -O2
-
-QMAKE_CXXFLAGS_RELEASE += -O3
-
 CONFIG += sdk_no_version_check
 
 
@@ -84,7 +78,8 @@ SOURCES += \
     detectcolorchips.cpp \
     createtargetcolor.cpp \
     colorchipsmask.cpp \
-    connectcameras.cpp
+    connectcameras.cpp \
+    workerdisplayfront.cpp
 
 HEADERS += \
     mainwindow.h \
@@ -119,7 +114,8 @@ HEADERS += \
     detectcolorchips.h \
     createtargetcolor.h \
     colorchipsmask.h \
-    connectcameras.h
+    connectcameras.h \
+    workerdisplayfront.h
 
 FORMS += \
     mainwindow.ui \

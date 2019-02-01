@@ -1,6 +1,8 @@
 #include "qrgenerate.h"
 #include "ui_qrgenerate.h"
 #include <QDebug>
+#include <opencv2/opencv.hpp>
+using namespace cv;
 QrGenerate::QrGenerate(QWidget *parent) :
   QDialog(parent),
   ui(new Ui::QrGenerate)
@@ -16,9 +18,14 @@ QrGenerate::~QrGenerate()
 {
   delete ui;
 }
-
+cv::Mat qimage_to_mat_ref(QImage &img, int format)
+{
+    return cv::Mat(img.height(), img.width(),
+            format, img.bits(), img.bytesPerLine());
+}
 void QrGenerate::on_view_clicked()
 {
+
   int brd = 4;
   QString msgfromtextbox = ui->labelinput->text();
   std::string stringtext = msgfromtextbox.toStdString();
@@ -30,9 +37,24 @@ void QrGenerate::on_view_clicked()
   myfile.close();
 
   QSvgRenderer renderer(QString("temp.svg"));
-  QImage image(200,200, QImage::Format_ARGB32);
+  QImage image(200,200, QImage::Format_RGB888);
+
+
+  //imwrite("/Users/dnguyen/Desktop/qrCO.png",view);
+
   QPainter painter(&image);
   renderer.render(&painter);
+  image.save("QRR.png");
+  cv::Mat qrA = imread("QRR.png");
+  cv::putText(qrA,
+                msgfromtextbox.toUtf8().constData(),
+                cv::Point(6,20), // Coordinates
+                cv::FONT_HERSHEY_COMPLEX_SMALL, // Font
+                0.8, // Scale. 2.0 = 2x bigger
+                cv::Scalar(0,0,0), // BGR Color
+                1); // Anti-alias (Optional)
+  imwrite("/Users/dnguyen/Desktop/qrCO.png",qrA);
+
 
   ui->label_2->setPixmap(QPixmap::fromImage(image));
 

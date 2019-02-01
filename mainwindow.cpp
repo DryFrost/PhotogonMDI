@@ -35,6 +35,8 @@ void MainWindow::loadFile(QString filePath){
   if(!filePath.isEmpty()){
       //load script
       mProject = new QSettings(filePath,QSettings::IniFormat);
+      mInternal->setValue("ProjectDir",filePath);
+      qDebug()<<filePath;
       Qr = mProject->value("Qr").toString();
       List = mProject->value("List").toString();
       Manual = mProject->value("Manual").toString();
@@ -304,8 +306,8 @@ void MainWindow::on_actionDisplay_Masks_triggered()
       loadSubWindow(mDisplayMask);
       if(mDisplayMask){
           connect(mListCapturePlant,SIGNAL(sendMaskTop(cv::Mat)),mDisplayMask,SLOT(updateMaskTop(cv::Mat)));
-          connect(mListCapturePlant,SIGNAL(sendMaskTop(cv::Mat)),mDisplayMask,SLOT(updateMaskTop(cv::Mat)));
-          connect(mListCapturePlant,SIGNAL(sendMaskTop(cv::Mat)),mDisplayMask,SLOT(updateMaskTop(cv::Mat)));
+          connect(mListCapturePlant,SIGNAL(sendMaskFront(cv::Mat)),mDisplayMask,SLOT(updateMaskFront(cv::Mat)));
+          connect(mListCapturePlant,SIGNAL(sendMaskSide(cv::Mat)),mDisplayMask,SLOT(updateMaskSide(cv::Mat)));
         }
     }
 

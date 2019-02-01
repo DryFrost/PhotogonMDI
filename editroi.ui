@@ -229,6 +229,10 @@
        <property name="text">
         <string>Cancel</string>
        </property>
+       <property name="icon">
+        <iconset resource="images.qrc">
+         <normaloff>:/icons/Images/process-stop.svg</normaloff>:/icons/Images/process-stop.svg</iconset>
+       </property>
       </widget>
      </item>
      <item>
@@ -249,12 +253,18 @@
        <property name="text">
         <string>Save</string>
        </property>
+       <property name="icon">
+        <iconset resource="images.qrc">
+         <normaloff>:/icons/Images/dialog-ok-apply.svg</normaloff>:/icons/Images/dialog-ok-apply.svg</iconset>
+       </property>
       </widget>
      </item>
     </layout>
    </item>
   </layout>
  </widget>
- <resources/>
+ <resources>
+  <include location="images.qrc"/>
+ </resources>
  <connections/>
 </ui>

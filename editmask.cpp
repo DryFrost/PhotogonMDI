@@ -20,6 +20,7 @@ editMask::editMask(QWidget *parent) :
 
   QSettings internal("internal.ini",QSettings::IniFormat);
   ProjectDir = internal.value("ProjectDir").value<QString>();
+  ProjectName = internal.value("ProjectName").value<QString>();
 
 }
 
@@ -91,20 +92,22 @@ void editMask::on_pushButton_clicked()
       b2HM = setup.value("Fb2HM").value<int>();
       blurKM = setup.value("FblurKM").value<int>();
       BluePlantThreshold = setup.value("BluePlantThresholdFront").value<int>();
-      BluePlantBlur = setup.value("BluePlantThresholdFront").value<int>();
-      GreenPlantThreshold = setup.value("BluePlantThresholdFront").value<int>();
-      GreenPlantBlur = setup.value("BluePlantThresholdFront").value<int>();
-      MaskAlphaThresholdDark = setup.value("BluePlantThresholdFront").value<int>();
-      MaskAlphaThresholdLight = setup.value("BluePlantThresholdFront").value<int>();
-      MaskBetaThreshold = setup.value("BluePlantThresholdFront").value<int>();
-      DifferenceDilateKernelSize = setup.value("BluePlantThresholdFront").value<int>();
-      DifferenceErodeKernelSize = setup.value("BluePlantThresholdFront").value<int>();
-      PotDilateKernelSize = setup.value("BluePlantThresholdFront").value<int>();
-      PotErodeKernelSize = setup.value("BluePlantThresholdFront").value<int>();
+      BluePlantBlur = setup.value("BluePlantBlurFront").value<int>();
+      GreenPlantThreshold = setup.value("GreenPlantThresholdFront").value<int>();
+      GreenPlantBlur = setup.value("GreenPlantBlurFront").value<int>();
+      MaskAlphaThresholdDark = setup.value("MaskAlphaThresholdDarkFront").value<int>();
+      MaskAlphaThresholdLight = setup.value("MaskAlphaThresholdLightFront").value<int>();
+      MaskBetaThreshold = setup.value("MaskBetaThresholdFront").value<int>();
+      DifferenceDilateKernelSize = setup.value("DifferenceDilateKernelSizeFront").value<int>();
+      DifferenceErodeKernelSize = setup.value("DifferenceErodeKernelSizeFront").value<int>();
+      PotDilateKernelSize = setup.value("PotDilateKernelSizeFront").value<int>();
+      PotErodeKernelSize = setup.value("PotErodeKernelSizeFront").value<int>();
       x1 = setup.value("x1Front").value<int>();
       x2 = setup.value("x2Front").value<int>();
       y1 = setup.value("y1Front").value<int>();
       y2 = setup.value("y2Front").value<int>();
+      ColorStandardization = setup.value("Color-Standardization").value<bool>();
+
 
     }
   if(cameraSelection=="Side"){
@@ -117,20 +120,22 @@ void editMask::on_pushButton_clicked()
       b2HM = setup.value("Sb2HM").value<int>();
       blurKM = setup.value("SblurKM").value<int>();
       BluePlantThreshold = setup.value("BluePlantThresholdSide").value<int>();
-      BluePlantBlur = setup.value("BluePlantThresholdSide").value<int>();
-      GreenPlantThreshold = setup.value("BluePlantThresholdSide").value<int>();
-      GreenPlantBlur = setup.value("BluePlantThresholdSide").value<int>();
-      MaskAlphaThresholdDark = setup.value("BluePlantThresholdSide").value<int>();
-      MaskAlphaThresholdLight = setup.value("BluePlantThresholdSide").value<int>();
-      MaskBetaThreshold = setup.value("BluePlantThresholdSide").value<int>();
-      DifferenceDilateKernelSize = setup.value("BluePlantThresholdSide").value<int>();
-      DifferenceErodeKernelSize = setup.value("BluePlantThresholdSide").value<int>();
-      PotDilateKernelSize = setup.value("BluePlantThresholdSide").value<int>();
-      PotErodeKernelSize = setup.value("BluePlantThresholdSide").value<int>();
+      BluePlantBlur = setup.value("BluePlantBlurSide").value<int>();
+      GreenPlantThreshold = setup.value("GreenPlantThresholdSide").value<int>();
+      GreenPlantBlur = setup.value("GreenPlantBlurSide").value<int>();
+      MaskAlphaThresholdDark = setup.value("MaskAlphaThresholdDarkSide").value<int>();
+      MaskAlphaThresholdLight = setup.value("MaskAlphaThresholdLightSide").value<int>();
+      MaskBetaThreshold = setup.value("MaskBetaThresholdSide").value<int>();
+      DifferenceDilateKernelSize = setup.value("DifferenceDilateKernelSizeSide").value<int>();
+      DifferenceErodeKernelSize = setup.value("DifferenceErodeKernelSizeSide").value<int>();
+      PotDilateKernelSize = setup.value("PotDilateKernelSizeSide").value<int>();
+      PotErodeKernelSize = setup.value("PotErodeKernelSizeSide").value<int>();
       x1 = setup.value("x1Side").value<int>();
       x2 = setup.value("x2Side").value<int>();
       y1 = setup.value("y1Side").value<int>();
       y2 = setup.value("y2Side").value<int>();
+      ColorStandardization = setup.value("Color-Standardization").value<bool>();
+
 
     }
   if(cameraSelection=="Top"){
@@ -143,20 +148,22 @@ void editMask::on_pushButton_clicked()
       b2HM = setup.value("Tb2HM").value<int>();
       blurKM = setup.value("TblurKM").value<int>();
       BluePlantThreshold = setup.value("BluePlantThresholdTop").value<int>();
-      BluePlantBlur = setup.value("BluePlantThresholdTop").value<int>();
-      GreenPlantThreshold = setup.value("BluePlantThresholdTop").value<int>();
-      GreenPlantBlur = setup.value("BluePlantThresholdTop").value<int>();
-      MaskAlphaThresholdDark = setup.value("BluePlantThresholdTop").value<int>();
-      MaskAlphaThresholdLight = setup.value("BluePlantThresholdTop").value<int>();
-      MaskBetaThreshold = setup.value("BluePlantThresholdTop").value<int>();
-      DifferenceDilateKernelSize = setup.value("BluePlantThresholdTop").value<int>();
-      DifferenceErodeKernelSize = setup.value("BluePlantThresholdTop").value<int>();
-      PotDilateKernelSize = setup.value("BluePlantThresholdTop").value<int>();
-      PotErodeKernelSize = setup.value("BluePlantThresholdTop").value<int>();
+      BluePlantBlur = setup.value("BluePlantBlurTop").value<int>();
+      GreenPlantThreshold = setup.value("GreenPlantThresholdTop").value<int>();
+      GreenPlantBlur = setup.value("GreenPlantBlurTop").value<int>();
+      MaskAlphaThresholdDark = setup.value("MaskAlphaThresholdDarkTop").value<int>();
+      MaskAlphaThresholdLight = setup.value("MaskAlphaThresholdLightTop").value<int>();
+      MaskBetaThreshold = setup.value("MaskBetaThresholdTop").value<int>();
+      DifferenceDilateKernelSize = setup.value("DifferenceDilateKernelSizeTop").value<int>();
+      DifferenceErodeKernelSize = setup.value("DifferenceErodeKernelSizeTop").value<int>();
+      PotDilateKernelSize = setup.value("PotDilateKernelSizeTop").value<int>();
+      PotErodeKernelSize = setup.value("PotErodeKernelSizeTop").value<int>();
       x1 = setup.value("x1Top").value<int>();
       x2 = setup.value("x2Top").value<int>();
       y1 = setup.value("y1Top").value<int>();
       y2 = setup.value("y2Top").value<int>();
+      ColorStandardization = setup.value("Color-Standardization").value<bool>();
+
 
     }
 
@@ -413,8 +420,32 @@ void editMask::update_window(){
 
   BluePlantThreshold = ui->BluePlantThreshold->value();
   BluePlantBlur = ui->BluePlantBlur->value();
+  if (BluePlantBlur==2){
+      BluePlantBlur=1;
+    }
+  if (BluePlantBlur==4){
+      BluePlantBlur=3;
+    }
+  if (BluePlantBlur==6){
+      BluePlantBlur=5;
+    }
+  if (BluePlantBlur==8){
+      BluePlantBlur=7;
+    }
   GreenPlantThreshold = ui->GreenPlantThreshold->value();
   GreenPlantBlur = ui->GreenPlantBlur->value();
+  if (GreenPlantBlur==2){
+      GreenPlantBlur=1;
+    }
+  if (GreenPlantBlur==4){
+      GreenPlantBlur=3;
+    }
+  if (GreenPlantBlur==6){
+      GreenPlantBlur=5;
+    }
+  if (GreenPlantBlur==8){
+      GreenPlantBlur=7;
+    }
   MaskAlphaThresholdDark = ui->MaskAlphaThresholdDark->value();
   MaskAlphaThresholdLight = ui->MaskAlphaThresholdLight->value();
   MaskBetaThreshold = ui->MaskBetaThreshold->value();
@@ -425,13 +456,21 @@ void editMask::update_window(){
 
   Mat adjImg;
 
-  float det = 0;
+  if(ColorStandardization){
 
-  MatrixXd rh, gh, bh;
+      float det = 0;
 
-  get_standardizations1(currentFrame,det,rh,gh,bh,cameraSelection);
+      MatrixXd rh, gh, bh;
 
-  adjImg = color_homography1(currentFrame,rh,gh,bh);
+      get_standardizations1(currentFrame,det,rh,gh,bh,cameraSelection);
+
+      adjImg = color_homography1(currentFrame,rh,gh,bh);
+
+    }
+  if(!ColorStandardization){
+      adjImg = currentFrame;
+    }
+
 
   Mat lab;
   Mat adjImage1 = adjImg.clone();

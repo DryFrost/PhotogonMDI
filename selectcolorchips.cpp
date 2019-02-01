@@ -50,7 +50,7 @@ void selectColorChips::on_pushButton_2_clicked()
 
   if(cameraSelection =="Front"){
       displayFrame = rawFront;
-      cv::cvtColor(displayFrame,displayFrame,cv::COLOR_BGR2RGB);
+      //cv::cvtColor(displayFrame,displayFrame,cv::COLOR_BGR2RGB);
       sendFrame = cvCreateImage(cvSize(displayFrame.cols,displayFrame.rows),8,3);
       IplImage ipltemp=displayFrame;
       cvCopy(&ipltemp,sendFrame);
@@ -112,7 +112,7 @@ void selectColorChips::on_pushButton_2_clicked()
 
   Size size(400,225);
   cv::resize(m,m,size);
-  cvtColor(displayFrame,displayFrame,CV_BGR2RGB);
+  cvtColor(m,m,CV_BGR2RGB);
   QImage qt_image = QImage((const unsigned char*)(m.data),m.cols,m.rows,QImage::Format_RGB888);
   ui->label->setPixmap(QPixmap::fromImage(qt_image));
 }
@@ -129,7 +129,7 @@ void selectColorChips::on_pushButton_3_clicked()
 
   if(cameraSelection =="Front"){
       displayFrame = rawFront;
-      cv::cvtColor(displayFrame,displayFrame,cv::COLOR_BGR2RGB);
+      //cv::cvtColor(displayFrame,displayFrame,cv::COLOR_BGR2RGB);
       sendFrame = cvCreateImage(cvSize(displayFrame.cols,displayFrame.rows),8,3);
       IplImage ipltemp=displayFrame;
       cvCopy(&ipltemp,sendFrame);

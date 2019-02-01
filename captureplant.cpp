@@ -17,6 +17,7 @@ capturePlant::capturePlant(QWidget *parent) :
   ProjectName = internal.value("ProjectName").value<QString>();
   QSettings setup(ProjectDirA,QSettings::IniFormat);
   ProjectDir = setup.value("ProjectDir").value<QString>();
+  qDebug() << ProjectDirA;
 
   FtLowM = setup.value("FtLowM").value<int>();
   FtHighM = setup.value("FtHighM").value<int>();
@@ -59,40 +60,41 @@ capturePlant::capturePlant(QWidget *parent) :
   y2Top = setup.value("y2Top").value<int>();
 
   BluePlantThresholdFront = setup.value("BluePlantThresholdFront").value<int>();
-  BluePlantBlurFront = setup.value("BluePlantThresholdFront").value<int>();
-  GreenPlantThresholdFront = setup.value("BluePlantThresholdFront").value<int>();
-  GreenPlantBlurFront = setup.value("BluePlantThresholdFront").value<int>();
-  MaskAlphaThresholdDarkFront = setup.value("BluePlantThresholdFront").value<int>();
-  MaskAlphaThresholdLightFront = setup.value("BluePlantThresholdFront").value<int>();
-  MaskBetaThresholdFront = setup.value("BluePlantThresholdFront").value<int>();
-  DifferenceDilateKernelSizeFront = setup.value("BluePlantThresholdFront").value<int>();
-  DifferenceErodeKernelSizeFront = setup.value("BluePlantThresholdFront").value<int>();
-  PotDilateKernelSizeFront = setup.value("BluePlantThresholdFront").value<int>();
-  PotErodeKernelSizeFront = setup.value("BluePlantThresholdFront").value<int>();
+  BluePlantBlurFront = setup.value("BluePlantBlurFront").value<int>();
+
+  GreenPlantThresholdFront = setup.value("GreenPlantThresholdFront").value<int>();
+  GreenPlantBlurFront = setup.value("GreenPlantBlurFront").value<int>();
+  MaskAlphaThresholdDarkFront = setup.value("MaskAlphaThresholdDarkFront").value<int>();
+  MaskAlphaThresholdLightFront = setup.value("MaskAlphaThresholdLightFront").value<int>();
+  MaskBetaThresholdFront = setup.value("MaskBetaThresholdFront").value<int>();
+  DifferenceDilateKernelSizeFront = setup.value("DifferenceDilateKernelSizeFront").value<int>();
+  DifferenceErodeKernelSizeFront = setup.value("DifferenceErodeKernelSizeFront").value<int>();
+  PotDilateKernelSizeFront = setup.value("PotDilateKernelSizeFront").value<int>();
+  PotErodeKernelSizeFront = setup.value("PotErodeKernelSizeFront").value<int>();
 
   BluePlantThresholdSide = setup.value("BluePlantThresholdSide").value<int>();
-  BluePlantBlurSide = setup.value("BluePlantThresholdSide").value<int>();
-  GreenPlantThresholdSide = setup.value("BluePlantThresholdSide").value<int>();
-  GreenPlantBlurSide = setup.value("BluePlantThresholdSide").value<int>();
-  MaskAlphaThresholdDarkSide = setup.value("BluePlantThresholdSide").value<int>();
-  MaskAlphaThresholdLightSide = setup.value("BluePlantThresholdSide").value<int>();
-  MaskBetaThresholdSide = setup.value("BluePlantThresholdSide").value<int>();
-  DifferenceDilateKernelSizeSide = setup.value("BluePlantThresholdSide").value<int>();
-  DifferenceErodeKernelSizeSide = setup.value("BluePlantThresholdSide").value<int>();
-  PotDilateKernelSizeSide = setup.value("BluePlantThresholdSide").value<int>();
-  PotErodeKernelSizeSide = setup.value("BluePlantThresholdSide").value<int>();
+  BluePlantBlurSide = setup.value("BluePlantBlurSide").value<int>();
+  GreenPlantThresholdSide = setup.value("GreenPlantThresholdSide").value<int>();
+  GreenPlantBlurSide = setup.value("GreenPlantBlurSide").value<int>();
+  MaskAlphaThresholdDarkSide = setup.value("MaskAlphaThresholdDarkSide").value<int>();
+  MaskAlphaThresholdLightSide = setup.value("MaskAlphaThresholdLightSide").value<int>();
+  MaskBetaThresholdSide = setup.value("MaskBetaThresholdSide").value<int>();
+  DifferenceDilateKernelSizeSide = setup.value("DifferenceDilateKernelSizeSide").value<int>();
+  DifferenceErodeKernelSizeSide = setup.value("DifferenceErodeKernelSizeSide").value<int>();
+  PotDilateKernelSizeSide = setup.value("PotDilateKernelSizeSide").value<int>();
+  PotErodeKernelSizeSide = setup.value("PotErodeKernelSizeSide").value<int>();
 
   BluePlantThresholdTop = setup.value("BluePlantThresholdTop").value<int>();
-  BluePlantBlurTop = setup.value("BluePlantThresholdTop").value<int>();
-  GreenPlantThresholdTop = setup.value("BluePlantThresholdTop").value<int>();
-  GreenPlantBlurTop = setup.value("BluePlantThresholdTop").value<int>();
-  MaskAlphaThresholdDarkTop = setup.value("BluePlantThresholdTop").value<int>();
-  MaskAlphaThresholdLightTop = setup.value("BluePlantThresholdTop").value<int>();
-  MaskBetaThresholdTop = setup.value("BluePlantThresholdTop").value<int>();
-  DifferenceDilateKernelSizeTop = setup.value("BluePlantThresholdTop").value<int>();
-  DifferenceErodeKernelSizeTop = setup.value("BluePlantThresholdTop").value<int>();
-  PotDilateKernelSizeTop = setup.value("BluePlantThresholdTop").value<int>();
-  PotErodeKernelSizeTop = setup.value("BluePlantThresholdTop").value<int>();
+  BluePlantBlurTop = setup.value("BluePlantBlurTop").value<int>();
+  GreenPlantThresholdTop = setup.value("GreenPlantThresholdTop").value<int>();
+  GreenPlantBlurTop = setup.value("GreenPlantBlurTop").value<int>();
+  MaskAlphaThresholdDarkTop = setup.value("MaskAlphaThresholdDarkTop").value<int>();
+  MaskAlphaThresholdLightTop = setup.value("MaskAlphaThresholdLightTop").value<int>();
+  MaskBetaThresholdTop = setup.value("MaskBetaThresholdTop").value<int>();
+  DifferenceDilateKernelSizeTop = setup.value("DifferenceDilateKernelSizeTop").value<int>();
+  DifferenceErodeKernelSizeTop = setup.value("DifferenceErodeKernelSizeTop").value<int>();
+  PotDilateKernelSizeTop = setup.value("PotDilateKernelSizeTop").value<int>();
+  PotErodeKernelSizeTop = setup.value("PotErodeKernelSizeTop").value<int>();
 
   ColorStandardization = setup.value("Color-Standardization").value<bool>();
   Area = setup.value("Area").value<bool>();
@@ -276,11 +278,16 @@ void capturePlant::on_pushButton_clicked()
   emit sendHistogramSide(HistogramImageSide);
 
   ui->pushButton_2->setEnabled(true);
+  ui->instructions->setText("Sample "+ qrCode + " Captured");
+
+
 
 }
 
 void capturePlant::on_pushButton_2_clicked()
 {
+  ui->instructions->setText("Capture Empty Chamber");
+
   QString fileDir = ProjectDir+"/Data/";
   if(!QDir(fileDir).exists()){
       QDir().mkdir(fileDir);

@@ -39,6 +39,7 @@ void createTargetColor::ColorFound(cv::Mat cc){
 
   QSettings internal("internal.ini",QSettings::IniFormat);
   QString ProjectDirA = internal.value("ProjectDir").value<QString>();
+  QString ProjectName = internal.value("ProjectName").value<QString>();
   QSettings setup(ProjectDirA,QSettings::IniFormat);
   QString ProjectDir = setup.value("ProjectDir").value<QString>();
 

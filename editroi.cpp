@@ -12,6 +12,7 @@ editROI::editROI(QWidget *parent) :
 
   QSettings internal("internal.ini",QSettings::IniFormat);
   ProjectDir = internal.value("ProjectDir").value<QString>();
+  QString ProjectName = internal.value("ProjectName").value<QString>();
 }
 
 void editROI::updateRawFrameTop(cv::Mat frame){
