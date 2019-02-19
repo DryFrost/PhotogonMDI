@@ -7,6 +7,7 @@
 #include <QSettings>
 #include <manualimportselected.h>
 #include <opencv2/opencv.hpp>
+#include <manualimportconfig.h>
 using namespace cv;
 ManualImport::ManualImport(QWidget *parent) :
   QWidget(parent),
@@ -67,5 +68,5 @@ void ManualImport::on_pushButton_4_clicked()
 
 void ManualImport::on_pushButton_5_clicked()
 {
-
+  new ManualImportConfig();
 }

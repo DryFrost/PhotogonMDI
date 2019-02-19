@@ -83,7 +83,10 @@ SOURCES += \
     manualimport.cpp \
     manualimportselected.cpp \
     manualimportconfig.cpp \
-    manualimportmasksubtraction.cpp
+    manualimportmasksubtraction.cpp \
+    manualroi.cpp \
+    manualimportmask.cpp \
+    manualcomputervisionsubtraction.cpp
 
 HEADERS += \
     mainwindow.h \
@@ -123,7 +126,10 @@ HEADERS += \
     manualimport.h \
     manualimportselected.h \
     manualimportconfig.h \
-    manualimportmasksubtraction.h
+    manualimportmasksubtraction.h \
+    manualroi.h \
+    manualimportmask.h \
+    manualcomputervisionsubtraction.h
 
 FORMS += \
     mainwindow.ui \
@@ -149,7 +155,9 @@ FORMS += \
     manualimport.ui \
     manualimportselected.ui \
     manualimportconfig.ui \
-    manualimportmasksubtraction.ui
+    manualimportmasksubtraction.ui \
+    manualroi.ui \
+    manualimportmask.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

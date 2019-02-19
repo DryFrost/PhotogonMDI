@@ -1,20 +1,20 @@
-#ifndef MANUALIMPORTMASKSUBTRACTION_H
-#define MANUALIMPORTMASKSUBTRACTION_H
+#ifndef MANUALIMPORTMASK_H
+#define MANUALIMPORTMASK_H
 
 #include <QDialog>
 #include <QTimer>
 #include <opencv2/opencv.hpp>
 namespace Ui {
-  class ManualImportMaskSubtraction;
+  class ManualImportMask;
 }
 
-class ManualImportMaskSubtraction : public QDialog
+class ManualImportMask : public QDialog
 {
   Q_OBJECT
 
 public:
-  explicit ManualImportMaskSubtraction(QWidget *parent = nullptr);
-  ~ManualImportMaskSubtraction();
+  explicit ManualImportMask(QWidget *parent = nullptr);
+  ~ManualImportMask();
 
 private slots:
   void on_pushButton_clicked();
@@ -25,7 +25,7 @@ private slots:
   void on_pushButton_5_clicked();
 
 private:
-  Ui::ManualImportMaskSubtraction *ui;
+  Ui::ManualImportMask *ui;
   QString ManualBackgroundPath;
   QTimer *timer;
   QString PlantPic;
@@ -39,22 +39,17 @@ private:
   int MaskAlphaThresholdDark;
   int MaskAlphaThresholdLight;
   int MaskBetaThreshold;
-  int DifferenceDilateKernelSize;
-  int DifferenceErodeKernelSize;
   int PotDilateKernelSize;
   int PotErodeKernelSize;
   int x1;
   int x2;
   int y1;
   int y2;
-  int tLowM;
-  int tHighM;
   int b1LM;
   int b1HM;
   int b2LM;
   int b2HM;
-  int blurKM;
 
 };
 
-#endif // MANUALIMPORTMASKSUBTRACTION_H
+#endif // MANUALIMPORTMASK_H

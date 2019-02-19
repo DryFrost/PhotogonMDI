@@ -1,5 +1,5 @@
-#include "manualimportmasksubtraction.h"
-#include "ui_manualimportmasksubtraction.h"
+#include "manualimportmask.h"
+#include "ui_manualimportmask.h"
 #include <QSettings>
 #include <opencv2/opencv.hpp>
 #include <opencv2/features2d.hpp>
@@ -14,9 +14,12 @@
 using namespace Eigen;
 using namespace cv;
 using namespace std;
-ManualImportMaskSubtraction::ManualImportMaskSubtraction(QWidget *parent) :
+
+
+
+ManualImportMask::ManualImportMask(QWidget *parent) :
   QDialog(parent),
-  ui(new Ui::ManualImportMaskSubtraction)
+  ui(new Ui::ManualImportMask)
 {
   ui->setupUi(this);
   show();
@@ -31,29 +34,21 @@ ManualImportMaskSubtraction::ManualImportMaskSubtraction(QWidget *parent) :
   MaskAlphaThresholdDark = internal.value("MaskAlphaThresholdDarkFront").value<int>();
   MaskAlphaThresholdLight = internal.value("MaskAlphaThresholdLightFront").value<int>();
   MaskBetaThreshold = internal.value("MaskBetaThresholdFront").value<int>();
-  DifferenceDilateKernelSize = internal.value("DifferenceDilateKernelSizeFront").value<int>();
-  DifferenceErodeKernelSize = internal.value("DifferenceErodeKernelSizeFront").value<int>();
   PotDilateKernelSize = internal.value("PotDilateKernelSizeFront").value<int>();
   PotErodeKernelSize = internal.value("PotErodeKernelSizeFront").value<int>();
   x1 = internal.value("x1Front").value<int>();
   x2 = internal.value("x2Front").value<int>();
   y1 = internal.value("y1Front").value<int>();
   y2 = internal.value("y2Front").value<int>();
-  tLowM = internal.value("FtLowM").value<int>();
-  tHighM = internal.value("FtHighM").value<int>();
   b1LM = internal.value("Fb1LM").value<int>();
   b1HM = internal.value("Fb1HM").value<int>();
   b2LM = internal.value("Fb2LM").value<int>();
   b2HM = internal.value("Fb2HM").value<int>();
-  blurKM = internal.value("FblurKM").value<int>();
 
   ui->bYFPL->setSliderPosition(b1LM);
   ui->bYSPL->setSliderPosition(b2LM);
   ui->bYFPH->setSliderPosition(b1HM);
   ui->bYSPH->setSliderPosition(b2HM);
-  ui->sTL->setSliderPosition(tLowM);
-  ui->sTH->setSliderPosition(tHighM);
-  ui->bKS->setSliderPosition(blurKM);
 
   ui->BluePlantThreshold->setSliderPosition(BluePlantThreshold);
   ui->BluePlantBlur->setSliderPosition(BluePlantBlur);
@@ -62,28 +57,27 @@ ManualImportMaskSubtraction::ManualImportMaskSubtraction(QWidget *parent) :
   ui->MaskAlphaThresholdDark->setSliderPosition(MaskAlphaThresholdDark);
   ui->MaskAlphaThresholdLight->setSliderPosition(MaskAlphaThresholdLight);
   ui->MaskBetaThreshold->setSliderPosition(MaskBetaThreshold);
-  ui->DifferenceDilateKernelSize->setSliderPosition(DifferenceDilateKernelSize);
-  ui->DifferenceErodeKernelSize->setSliderPosition(DifferenceErodeKernelSize);
   ui->PotDilateKernelSize->setSliderPosition(PotDilateKernelSize);
   ui->PotErodeKernelSize->setSliderPosition(PotErodeKernelSize);
-
 }
 
-ManualImportMaskSubtraction::~ManualImportMaskSubtraction()
+ManualImportMask::~ManualImportMask()
 {
   delete ui;
 }
 
-void ManualImportMaskSubtraction::on_pushButton_clicked()
+void ManualImportMask::on_pushButton_clicked()
 {
+
   PlantPic = QFileDialog::getOpenFileName(this, tr("Files"), QDir::currentPath(), tr("*.jpg *.png"));
   currentFrame = imread(PlantPic.toUtf8().constData());
   blank = imread(ManualBackgroundPath.toUtf8().constData());
   connect(timer,SIGNAL(timeout()),this,SLOT(update_window()));
   timer->start(20);
+
 }
 
-Mat fill_holes2(Mat src){
+Mat fill_holes3(Mat src){
     Mat dst = Mat::zeros(src.size(),src.type());
     vector<vector<Point>>contours;
     vector<Vec4i> hierarchy;
@@ -94,7 +88,7 @@ Mat fill_holes2(Mat src){
     return dst;
 }
 
-vector<Point> keep_roi2(Mat img,const Point& tl, const Point& br, Mat &mask){
+vector<Point> keep_roi3(Mat img,const Point& tl, const Point& br, Mat &mask){
     //-- Get contours of mask
     vector<vector<Point> > contours;
     vector<Vec4i> hierarchy;
@@ -131,7 +125,7 @@ vector<Point> keep_roi2(Mat img,const Point& tl, const Point& br, Mat &mask){
 }
 
 
-float extractRGB_chips2(Mat &img,Mat &mask){
+float extractRGB_chips3(Mat &img,Mat &mask){
     //-- Averages the histogram for a given channel
     Mat hist;
     int dims = 1;
@@ -155,7 +149,7 @@ float extractRGB_chips2(Mat &img,Mat &mask){
     return hist_avg;
 }
 
-MatrixXd getRGBarray2(Mat img){
+MatrixXd getRGBarray3(Mat img){
     //-- Loops over chips and gets RGB values of each one
     MatrixXd sourceColors(22,3);
     vector<Mat> bgr;
@@ -186,9 +180,9 @@ MatrixXd getRGBarray2(Mat img){
         Mat cc;
         threshold(mask,cc,90,255,THRESH_BINARY);
 
-        float b_avg = extractRGB_chips2(b, cc);
-        float g_avg = extractRGB_chips2(g, cc);
-        float r_avg = extractRGB_chips2(r, cc);
+        float b_avg = extractRGB_chips3(b, cc);
+        float g_avg = extractRGB_chips3(g, cc);
+        float r_avg = extractRGB_chips3(r, cc);
         sourceColors(i-1,0) = b_avg;
         sourceColors(i-1,1) = g_avg;
         sourceColors(i-1,2) = r_avg;
@@ -196,10 +190,10 @@ MatrixXd getRGBarray2(Mat img){
     return(sourceColors);
 }
 
-void get_standardizations2(Mat img, float &det, MatrixXd &rh,MatrixXd &gh,MatrixXd &bh){
+void get_standardizations3(Mat img, float &det, MatrixXd &rh,MatrixXd &gh,MatrixXd &bh){
     //-- Extending source RGB chips to squared and cubic terms
     MatrixXd source1, source2, source3;
-    source1 = getRGBarray2(img);
+    source1 = getRGBarray3(img);
     source2 = (source1.array() * source1.array()).matrix();
     source3 = (source2.array() * source1.array()).matrix();
     MatrixXd source(source1.rows(),source1.cols()+source2.cols()+source3.cols());
@@ -264,7 +258,7 @@ void get_standardizations2(Mat img, float &det, MatrixXd &rh,MatrixXd &gh,Matrix
     det = H.transpose().determinant();
 }
 
-Mat color_homography2(Mat img, MatrixXd r_coef,MatrixXd g_coef,MatrixXd b_coef){
+Mat color_homography3(Mat img, MatrixXd r_coef,MatrixXd g_coef,MatrixXd b_coef){
     Mat b, g, r, b2, g2, r2, b3, g3, r3;
     vector<Mat> bgr(3);
     split(img,bgr);
@@ -294,15 +288,13 @@ Mat color_homography2(Mat img, MatrixXd r_coef,MatrixXd g_coef,MatrixXd b_coef){
     return adjImage;
 }
 
-void ManualImportMaskSubtraction::update_window(){
+void ManualImportMask::update_window(){
 
-  tLowM = ui->sTL->value();
-  tHighM = ui->sTH->value();
+
   b1LM = ui->bYFPL->value();
   b1HM = ui->bYFPH->value();
   b2LM = ui->bYSPL->value();
   b2HM = ui->bYSPH->value();
-  blurKM = ui->bKS->value();
 
   BluePlantThreshold = ui->BluePlantThreshold->value();
   BluePlantBlur = ui->BluePlantBlur->value();
@@ -335,8 +327,6 @@ void ManualImportMaskSubtraction::update_window(){
   MaskAlphaThresholdDark = ui->MaskAlphaThresholdDark->value();
   MaskAlphaThresholdLight = ui->MaskAlphaThresholdLight->value();
   MaskBetaThreshold = ui->MaskBetaThreshold->value();
-  DifferenceDilateKernelSize = ui->DifferenceDilateKernelSize->value();
-  DifferenceErodeKernelSize = ui->DifferenceErodeKernelSize->value();
   PotDilateKernelSize = ui->PotDilateKernelSize->value();
   PotErodeKernelSize = ui->PotErodeKernelSize->value();
 
@@ -348,9 +338,9 @@ void ManualImportMaskSubtraction::update_window(){
 
       MatrixXd rh, gh, bh;
 
-      get_standardizations2(currentFrame,det,rh,gh,bh);
+      get_standardizations3(currentFrame,det,rh,gh,bh);
 
-      adjImg = color_homography2(currentFrame,rh,gh,bh);
+      adjImg = color_homography3(currentFrame,rh,gh,bh);
 
     }
   if(!ManualColorStandard){
@@ -366,7 +356,7 @@ void ManualImportMaskSubtraction::update_window(){
   Mat mask_b;
   threshold(split_lab[2], mask_b, BluePlantThreshold, 255,THRESH_BINARY);
   medianBlur(mask_b, mask_b, BluePlantBlur);
-  mask_b=fill_holes2(mask_b);
+  mask_b=fill_holes3(mask_b);
 
   Mat hsv;
   cvtColor(adjImage1, hsv, cv::COLOR_BGR2HSV);
@@ -375,7 +365,7 @@ void ManualImportMaskSubtraction::update_window(){
   Mat mask_s;
   threshold(split_hsv[1], mask_s, GreenPlantThreshold, 255, THRESH_BINARY);
   medianBlur(mask_s, mask_s, GreenPlantBlur);
-  mask_s=fill_holes2(mask_s);
+  mask_s=fill_holes3(mask_s);
 
   Mat mask_erode;
   bitwise_or(mask_b, mask_s, mask_erode);
@@ -397,26 +387,8 @@ void ManualImportMaskSubtraction::update_window(){
   bitwise_or(maskeda_thresh, maskedb_thresh, ab1);
   bitwise_or(maskeda_thresh1, ab1, ab);
 
-
-  Mat dest;
-  absdiff(blank,adjImg,dest);
-  vector<Mat> channels(3);
-  split(dest,channels);
-  Mat dest_blur;
-  blur(channels[1],dest_blur,Size(blurKM,blurKM));
-  Mat dest_thresh;
-  threshold(dest_blur,dest_thresh,tLowM,tHighM,THRESH_BINARY);
-  Mat dest_dilate;
-  dilate(dest_thresh,dest_dilate,Mat(), Point(-1,-1),DifferenceDilateKernelSize,1,1);
-  Mat dest_erode;
-  erode(dest_dilate,dest_erode,Mat(),Point(-1,-1),DifferenceErodeKernelSize,1,1);
-
-  Mat mask_and_Sub;
-  bitwise_and(ab, dest_erode, mask_and_Sub);
-
-
   Mat dest_lab;
-  cvtColor(dest,dest_lab,CV_BGR2Lab);
+  cvtColor(adjImg,dest_lab,CV_BGR2Lab);
   vector<Mat> channels_lab;
   split(dest_lab,channels_lab);
   Mat pot_thresh1;
@@ -430,10 +402,10 @@ void ManualImportMaskSubtraction::update_window(){
   Mat pot_erode;
   erode(pot_dilate,pot_erode, Mat(), Point(-1, -1), PotErodeKernelSize, 1, 1);
   Mat pot_and;
-  bitwise_and(pot_erode,mask_and_Sub,pot_and);
+  bitwise_and(pot_erode,ab,pot_and);
   Mat pot_roi;
 
-  vector<Point> cc_pot = keep_roi2(pot_and,Point(x1,y1),Point(x2,y2),pot_roi);
+  vector<Point> cc_pot = keep_roi3(pot_and,Point(x1,y1),Point(x2,y2),pot_roi);
 
   Mat inputImage_lab;
   cvtColor(adjImg, inputImage_lab, CV_BGR2Lab);
@@ -444,14 +416,14 @@ void ManualImportMaskSubtraction::update_window(){
   Mat b_er;
   erode(b_thresh,b_er, Mat(), Point(-1, -1), 1, 1, 1);
   Mat b_roi;
-  vector<Point> cc1 = keep_roi2(b_er,Point(x1,y1),Point(x2,y2),b_roi);
+  vector<Point> cc1 = keep_roi3(b_er,Point(x1,y1),Point(x2,y2),b_roi);
   Mat b_dil;
   dilate(b_roi,b_dil,Mat(),Point(-1, -1), 6, 1, 1);
   Mat b_xor = pot_roi - b_dil;
 
 
   Mat mask;
-  vector<Point> cc = keep_roi2(b_xor,Point(x1,y2),Point(x1,y2),mask);
+  vector<Point> cc = keep_roi3(b_xor,Point(x1,y2),Point(x1,y2),mask);
 
   Size size(300,200);
 
@@ -462,16 +434,13 @@ void ManualImportMaskSubtraction::update_window(){
 
 }
 
-void ManualImportMaskSubtraction::on_pushButton_4_clicked()
+void ManualImportMask::on_pushButton_4_clicked()
 {
   QSettings internal("internal.ini",QSettings::IniFormat);
-  internal.setValue("FtLowM",QVariant::fromValue(tLowM));
-  internal.setValue("FtHighM",QVariant::fromValue(tHighM));
   internal.setValue("Fb1LM",QVariant::fromValue(b1LM));
   internal.setValue("Fb1HM",QVariant::fromValue(b1HM));
   internal.setValue("Fb2LM",QVariant::fromValue(b2LM));
   internal.setValue("Fb2HM",QVariant::fromValue(b2HM));
-  internal.setValue("FblurKM",QVariant::fromValue(blurKM));
   internal.setValue("BluePlantThresholdFront",QVariant::fromValue(BluePlantThreshold));
   internal.setValue("BluePlantBlurFront",QVariant::fromValue(BluePlantBlur));
   internal.setValue("GreenPlantThresholdFront",QVariant::fromValue(GreenPlantThreshold));
@@ -479,14 +448,12 @@ void ManualImportMaskSubtraction::on_pushButton_4_clicked()
   internal.setValue("MaskAlphaThresholdDarkFront",QVariant::fromValue(MaskAlphaThresholdDark));
   internal.setValue("MaskAlphaThresholdLightFront",QVariant::fromValue(MaskAlphaThresholdLight));
   internal.setValue("MaskBetaThresholdFront",QVariant::fromValue(MaskBetaThreshold));
-  internal.setValue("DifferenceDilateKernelSizeFront",QVariant::fromValue(DifferenceDilateKernelSize));
-  internal.setValue("DifferenceErodeKernelSizeFront",QVariant::fromValue(DifferenceErodeKernelSize));
   internal.setValue("PotDilateKernelSizeFront",QVariant::fromValue(PotDilateKernelSize));
   internal.setValue("PotErodeKernelSizeFront",QVariant::fromValue(PotErodeKernelSize));
   close();
 }
 
-void ManualImportMaskSubtraction::on_pushButton_5_clicked()
+void ManualImportMask::on_pushButton_5_clicked()
 {
     close();
 }
