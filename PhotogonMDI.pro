@@ -79,7 +79,11 @@ SOURCES += \
     createtargetcolor.cpp \
     colorchipsmask.cpp \
     connectcameras.cpp \
-    workerdisplayfront.cpp
+    workerdisplayfront.cpp \
+    manualimport.cpp \
+    manualimportselected.cpp \
+    manualimportconfig.cpp \
+    manualimportmasksubtraction.cpp
 
 HEADERS += \
     mainwindow.h \
@@ -115,7 +119,11 @@ HEADERS += \
     createtargetcolor.h \
     colorchipsmask.h \
     connectcameras.h \
-    workerdisplayfront.h
+    workerdisplayfront.h \
+    manualimport.h \
+    manualimportselected.h \
+    manualimportconfig.h \
+    manualimportmasksubtraction.h
 
 FORMS += \
     mainwindow.ui \
@@ -137,7 +145,11 @@ FORMS += \
     welcomescreen.ui \
     editroi.ui \
     selectcolorchips.ui \
-    connectcameras.ui
+    connectcameras.ui \
+    manualimport.ui \
+    manualimportselected.ui \
+    manualimportconfig.ui \
+    manualimportmasksubtraction.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

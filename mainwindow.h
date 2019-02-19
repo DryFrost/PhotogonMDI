@@ -27,6 +27,8 @@
 #include "cameradiscovery.h"
 #include "myudp.h"
 #include "connectcameras.h"
+#include "manualimport.h"
+
 
 class capturePlant;
 class displayFront;
@@ -41,6 +43,7 @@ class QThread;
 class editROI;
 class selectColorChips;
 class connectCameras;
+class ManualImport;
 
 namespace Ui {
   class MainWindow;
@@ -103,6 +106,8 @@ private slots:
 
   void on_actionLoad_Cameras_triggered();
 
+  void on_actionImport_Images_triggered();
+
 private:
   Ui::MainWindow *ui;
 
@@ -121,6 +126,7 @@ private:
   QPointer<editROI> mEditROI;
   QPointer<selectColorChips> mSelectColorChips;
   QPointer<connectCameras> mConnectCameras;
+  QPointer<ManualImport> mManualImport;
 
   int numCams;
   QThread* threads[MAX_NUM_CAM];

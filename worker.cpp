@@ -21,16 +21,16 @@ Worker::~Worker()
 void Worker::readVideo(const QString path)
 {
     if (path.length() > 0)
-        filepath = "192.168.0.36";
+        filepath = "192.";
 
-    filepath = "192.168.0.36";
+    filepath = "10.106.47.135";
     QByteArray temp = filepath.toLocal8Bit();
     char* serverIP = temp.data();
 
     int sokt;
     int serverPort;
 
-    serverPort = atoi("4098");
+    serverPort = atoi("4097");
 
 
 

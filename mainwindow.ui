@@ -85,6 +85,7 @@
    </attribute>
    <addaction name="actionNew_Project"/>
    <addaction name="actionOpen_Project"/>
+   <addaction name="actionImport_Images"/>
    <addaction name="actionDetect_Cameras"/>
    <addaction name="actionLoad_Cameras"/>
    <addaction name="actionActivate_Cameras"/>
@@ -284,6 +285,11 @@
    </property>
    <property name="text">
     <string>Load Cameras</string>
+   </property>
+  </action>
+  <action name="actionImport_Images">
+   <property name="text">
+    <string>Import Images</string>
    </property>
   </action>
  </widget>

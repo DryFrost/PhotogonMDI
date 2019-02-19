@@ -357,3 +357,9 @@ void MainWindow::on_actionLoad_Cameras_triggered()
   mConnectCameras = new connectCameras(this);
   loadSubWindow(mConnectCameras);
 }
+
+void MainWindow::on_actionImport_Images_triggered()
+{
+  mManualImport = new ManualImport(this);
+  loadSubWindow(mManualImport);
+}
