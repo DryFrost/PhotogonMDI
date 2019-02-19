@@ -86,7 +86,8 @@ SOURCES += \
     manualimportmasksubtraction.cpp \
     manualroi.cpp \
     manualimportmask.cpp \
-    manualcomputervisionsubtraction.cpp
+    manualcomputervisionsubtraction.cpp \
+    manualcomputervision.cpp
 
 HEADERS += \
     mainwindow.h \
@@ -129,7 +130,8 @@ HEADERS += \
     manualimportmasksubtraction.h \
     manualroi.h \
     manualimportmask.h \
-    manualcomputervisionsubtraction.h
+    manualcomputervisionsubtraction.h \
+    manualcomputervision.h
 
 FORMS += \
     mainwindow.ui \
