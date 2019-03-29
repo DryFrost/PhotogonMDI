@@ -11,15 +11,15 @@ ManualImportConfig::ManualImportConfig(QWidget *parent) :
 {
   ui->setupUi(this);
   show();
-  int x1 = 300;
-  int y1 = 100;
-  int x2 = 1000;
-  int y2 = 650;
+  int x1 = 700;
+  int y1 = 600;
+  int x2 = 1610;
+  int y2 = 1390;
   QSettings internal("internal.ini",QSettings::IniFormat);
-  internal.setValue("x1Top",QVariant::fromValue(x1));
-  internal.setValue("x2Top",QVariant::fromValue(x2));
-  internal.setValue("y1Top",QVariant::fromValue(y1));
-  internal.setValue("y2Top",QVariant::fromValue(y2));
+  internal.setValue("x1Front",QVariant::fromValue(x1));
+  internal.setValue("x2Front",QVariant::fromValue(x2));
+  internal.setValue("y1Front",QVariant::fromValue(y1));
+  internal.setValue("y2Front",QVariant::fromValue(y2));
   int tLowM = 40;
   int tHighM = 255;
   int b1LM = 0;
@@ -27,9 +27,9 @@ ManualImportConfig::ManualImportConfig(QWidget *parent) :
   int b2LM = 135;
   int b2HM = 200;
   int blurKM = 6;
-  int BluePlantThreshold =130;
-  int BluePlantBlur =5;
-  int GreenPlantThreshold=85;
+  int BluePlantThreshold =135;
+  int BluePlantBlur =3;
+  int GreenPlantThreshold=65;
   int GreenPlantBlur=5;
   int MaskAlphaThresholdDark=115;
   int MaskAlphaThresholdLight=135;
@@ -104,7 +104,7 @@ void ManualImportConfig::on_pushButton_3_clicked()
   if(SegMethod1 == "Background Subtraction"){
       new ManualImportMaskSubtraction();
     }
-  if(SegMethod1 == "Binary Subtraction"){
+  if(SegMethod1 == "Binary Substraction"){
       new ManualImportMask();
     }
 

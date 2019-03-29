@@ -7,7 +7,7 @@
 #include <sys/socket.h>
 #include <arpa/inet.h>
 #include <unistd.h>
-
+#include <mytcp.h>
 class Worker : public QObject
 {
     Q_OBJECT
@@ -28,6 +28,7 @@ signals:
 private:
     QString filepath;
     int index;
+    MyTCP server;
 };
 
 #endif // WORKER_H

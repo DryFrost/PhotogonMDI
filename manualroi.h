@@ -27,6 +27,7 @@ private slots:
 
 private:
   Ui::ManualROI *ui;
+  cv::Mat frame;
   int x1;
   int x2;
   int y1;

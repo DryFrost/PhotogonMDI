@@ -1,7 +1,7 @@
 #include "captureplant.h"
 #include "ui_captureplant.h"
 
-
+#include <QTime>
 using namespace cv;
 using namespace zbar;
 
@@ -19,6 +19,8 @@ capturePlant::capturePlant(QWidget *parent) :
   ProjectDir = setup.value("ProjectDir").value<QString>();
   qDebug() << ProjectDirA;
 
+
+  udpCP = new MyUDP(this);
   FtLowM = setup.value("FtLowM").value<int>();
   FtHighM = setup.value("FtHighM").value<int>();
   Fb1LM = setup.value("Fb1LM").value<int>();
@@ -121,8 +123,8 @@ capturePlant::capturePlant(QWidget *parent) :
   ui->setupUi(this);
   tookBlank = false;
 
-  connect(timer,SIGNAL(timeout()),this,SLOT(update_window()));
-  timer->start();
+  //connect(timer,SIGNAL(timeout()),this,SLOT(update_window()));
+  //timer->start();
 }
 
 capturePlant::~capturePlant()
@@ -140,7 +142,7 @@ void capturePlant::updateRawFrameTop(cv::Mat frame){
   rawTop = frame;
 }
 void capturePlant::updateRawFrameFront(cv::Mat frame){
-  rawFront = frame;  
+  rawFront = frame;
 
 }
 void capturePlant::updateRawFrameSide(cv::Mat frame){
@@ -168,22 +170,82 @@ void capturePlant::update_window(){
 
 }
 
-
-
+bool equal(const Mat & a, const Mat & b)
+{
+    if ( (a.rows != b.rows) || (a.cols != b.cols) )
+        return false;
+    Scalar s = sum( a - b );
+    return (s[0]==0) && (s[1]==0) && (s[2]==0);
+}
+void delay( int millisecondsToWait )
+{
+    QTime dieTime = QTime::currentTime().addMSecs( millisecondsToWait );
+    while( QTime::currentTime() < dieTime )
+    {
+        QCoreApplication::processEvents( QEventLoop::AllEvents, 100 );
+    }
+}
 void capturePlant::on_pushButton_3_clicked()
 {
+  QString command = "Capture";
+  udpCP->deviceDiscover(command);
+  delay(45000);
+  qDebug()<<"Got it";
   blankTop=rawTop;
   blankSide=rawSide;
   blankFront=rawFront;
-  tookBlank = true;
-  ui->pushButton_3->setEnabled(false);
+  imwrite("/Users/dnguyen/Desktop/BlankTop.png",blankTop);
+
+  //ui->pushButton_3->setEnabled(false);
+  ui->pushButton_4->setEnabled(true);
+  ui->pushButton->setEnabled(true);
+
+  Mat disTop;
+  Mat disFront;
+  Mat disSide;
+
+  cv::Size size(164,150);
+  cv::resize(blankFront,disTop,size);
+  cv::cvtColor(disTop,disTop,cv::COLOR_BGR2RGB);
+  cv::resize(blankSide,disSide,size);
+  cv::cvtColor(disSide,disSide,cv::COLOR_BGR2RGB);
+  cv::resize(blankFront,disFront,size);
+  cv::cvtColor(disFront,disFront,cv::COLOR_BGR2RGB);
+
+  QImage Front((uchar*)disFront.data,disFront.cols,disFront.rows,disFront.step,QImage::Format_RGB888);
+  QImage Side((uchar*)disSide.data,disSide.cols,disSide.rows,disSide.step,QImage::Format_RGB888);
+  QImage Top((uchar*)disTop.data,disTop.cols,disTop.rows,disTop.step,QImage::Format_RGB888);
+
+  ui->label->setPixmap(QPixmap::fromImage(Front));
+  ui->label_2->setPixmap(QPixmap::fromImage(Side));
+  ui->label_3->setPixmap(QPixmap::fromImage(Top));
+
+
 }
 
 void capturePlant::on_pushButton_clicked()
 {
-  accTop=rawTop;
-  accSide=rawSide;
-  accFront=rawFront;
+  QString command = "Capture";
+  udpCP->deviceDiscover(command);
+  delay(45000);
+  accTop=server2.getImage();;
+  accSide=server2.getImage();;
+  accFront=server2.getImage();;
+
+  ImageScanner scanner;
+  scanner.set_config(ZBAR_QRCODE,ZBAR_CFG_ENABLE,1);
+  Mat imGray;
+  cvtColor(accFront,imGray,CV_BGR2GRAY);
+  Image image(accFront.cols,accFront.rows,"Y800",(uchar *)imGray.data,accFront.cols*accFront.rows);
+  int n = scanner.scan(image);
+  for(Image::SymbolIterator symbol = image.symbol_begin();symbol != image.symbol_end();++symbol){
+      qrCode = QString::fromStdString(symbol->get_data());
+      tookBlank = false;
+      ui->instructions->setText("Sample "+ qrCode + " loaded");
+      ui->pushButton_4->setEnabled(true);
+      ui->pushButton->setEnabled(true);
+    }
+
 
   Mat disTop;
   Mat disSide;
@@ -279,8 +341,6 @@ void capturePlant::on_pushButton_clicked()
 
   ui->pushButton_2->setEnabled(true);
   ui->instructions->setText("Sample "+ qrCode + " Captured");
-
-
 
 }
 

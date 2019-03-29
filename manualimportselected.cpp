@@ -11,7 +11,7 @@ ManualImportSelected::ManualImportSelected(QWidget *parent) :
   show();
   QSettings internal("internal.ini",QSettings::IniFormat);
   QString dir = internal.value("ProjectDirManual").value<QString>();
-  QDirIterator it(dir, QStringList() << "*.jpg", QDir::Files, QDirIterator::Subdirectories);
+  QDirIterator it(dir, QStringList() << "*.png", QDir::Files, QDirIterator::Subdirectories);
   while (it.hasNext()){
       QFile f(it.next());
       f.open(QIODevice::ReadOnly);

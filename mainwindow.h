@@ -28,6 +28,9 @@
 #include "myudp.h"
 #include "connectcameras.h"
 #include "manualimport.h"
+#include "mytcp.h"
+#include "mytcpside.h"
+#include <QTimer>
 
 
 class capturePlant;
@@ -44,6 +47,9 @@ class editROI;
 class selectColorChips;
 class connectCameras;
 class ManualImport;
+class MyTCP;
+class MyTCPSide;
+
 
 namespace Ui {
   class MainWindow;
@@ -69,6 +75,7 @@ signals:
     void SendRawFrameTop(cv::Mat frame);
     void SendRawFrameFront(cv::Mat frame);
     void SendRawFrameSide(cv::Mat frame);
+
 
 public slots:
   void displayFrame(cv::Mat frame, int index);
@@ -108,6 +115,10 @@ private slots:
 
   void on_actionImport_Images_triggered();
 
+     void update_window();
+
+
+
 private:
   Ui::MainWindow *ui;
 
@@ -127,6 +138,7 @@ private:
   QPointer<selectColorChips> mSelectColorChips;
   QPointer<connectCameras> mConnectCameras;
   QPointer<ManualImport> mManualImport;
+  QPointer<MyTCP> mMyTCP;
 
   int numCams;
   QThread* threads[MAX_NUM_CAM];
@@ -148,8 +160,6 @@ private:
 
   bool ColorStandardization;
 
-
-
   void loadSubWindow(QWidget *widget);
 
   void setRecentFile(QString);
@@ -159,6 +169,9 @@ private:
   QAction* mActionSeparatorRecentFiles;
 
   MyUDP* udp;
+  MyTCP server1;
+  MyTCPSide serverSide;
+    QTimer *timer;
 };
 
 #endif // MAINWINDOW_H

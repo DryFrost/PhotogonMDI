@@ -33,7 +33,8 @@ ManualROI::~ManualROI()
 void ManualROI::on_load_clicked()
 {
   FilePath = QFileDialog::getOpenFileName(this, tr("Files"), QDir::currentPath(), tr("*.jpg *.png"));
-  CurrentFrame = imread(FilePath.toUtf8().constData());
+  frame = imread(FilePath.toUtf8().constData());
+  CurrentFrame = frame.clone();
   connect(timer,SIGNAL(timeout()),this,SLOT(update_window()));
   timer->start(20);
 }
@@ -43,6 +44,7 @@ void ManualROI::update_window(){
   x2 = ui->x2->value();
   y1 = ui->y1->value();
   y2 = ui->y2->value();
+  CurrentFrame = frame.clone();
 
   cv::rectangle(CurrentFrame,Point(x1,y1),Point(x2,y2),Scalar(255,255,0),4,LINE_8,0);
 

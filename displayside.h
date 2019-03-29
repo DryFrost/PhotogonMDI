@@ -19,6 +19,7 @@ public slots:
 
 private:
   Ui::displaySide *ui;
+  cv::Mat frame;
 };
 
 #endif // DISPLAYSIDE_H

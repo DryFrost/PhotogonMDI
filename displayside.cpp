@@ -6,6 +6,7 @@ displaySide::displaySide(QWidget *parent) :
   ui(new Ui::displaySide)
 {
   ui->setupUi(this);
+  frame = cv::Mat(cv::Size(640, 480), CV_8UC3, cv::Scalar(192, 0, 0));
 }
 
 displaySide::~displaySide()

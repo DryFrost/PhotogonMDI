@@ -9,8 +9,11 @@ MainWindow::MainWindow(QWidget *parent) :
   ui->setupUi(this);
   setCentralWidget(ui->mdiArea);
   qRegisterMetaType<cv::Mat >("cv::Mat");
-
+  //RawFrameTop = server1.getImage();
+  server1.setStatusBar(ui->statusbar);
+  serverSide.setStatusBar(ui->statusbar);
   mInternal = new QSettings("internal.ini",QSettings::IniFormat);
+    timer = new QTimer(this);
 
   mMenuRecentFiles = new QMenu(this);
   for (int n=0; n<maxRecentFiles;++n){
@@ -102,20 +105,12 @@ void MainWindow::displayFrame(cv::Mat frame, int  index)
 {
   //CREATE EMPTY FRAMES;
 
-  if(index == 0){
-      RawFrameFront=frame;
-
-    }
-  if(index == 1){
-      RawFrameSide=frame;
-
-    }
-  if(index == 2){
-      RawFrameTop=frame;
-    }
-  emit SendRawFrameTop(RawFrameTop);
-  emit SendRawFrameSide(RawFrameSide);
-  emit SendRawFrameFront(RawFrameFront);
+  //RawFrameTop = server1.getImage();
+  //RawFrameSide = server1.getImage();
+  //RawFrameFront = server1.getImage();
+  //emit SendRawFrameTop(RawFrameTop);
+  //emit SendRawFrameSide(RawFrameSide);
+  //emit SendRawFrameFront(RawFrameFront);
 
 
 }
@@ -222,36 +217,16 @@ void MainWindow::on_actionModify_Mask_Properties_triggered()
 void MainWindow::on_actionActivate_Cameras_triggered()
 {
 
-  udp = new MyUDP(this);
+//  udp = new MyUDP(this);
 
-  QString command = "Capture";
-  udp->deviceDiscover(command);
-
-  QString FrontCameraIP = mInternal->value("FrontCameraIP").toString();
-  QString SideCameraIP = mInternal->value("SideCameraIP").toString();
-  QString TopCameraIP = mInternal->value("TopCameraIP").toString();
-
-  QStringList ipList;
-  ipList<<FrontCameraIP<<SideCameraIP<<TopCameraIP;
-
-  int numCams = 1;
-  for(int i = 0; i < numCams; i++)
-  {
-      threads[i] = new QThread;
-      workers[i] = new Worker(QString(ipList[i]),i);
-
-      workers[i]->moveToThread(threads[i]);
-
-      connect(workers[i], SIGNAL(frameFinished(cv::Mat, int)), this, SLOT(displayFrame(cv::Mat,int)));
-      connect(threads[i], SIGNAL(started()), workers[i], SLOT(readVideo()));
-
-      connect(workers[i], SIGNAL(finished(int)), threads[i], SLOT(quit()));
-      connect(workers[i], SIGNAL(finished(int)), workers[i], SLOT(deleteLater()));
-
-      connect(threads[i], SIGNAL(finished()), threads[i], SLOT(deleteLater()));
-
-      threads[i]->start();
-  }
+ // QString command = "Capture";
+ // udp->deviceDiscover(command);
+ // RawFrameFront = server1.getImage();
+ // emit SendRawFrameFront(RawFrameFront);
+ // emit SendRawFrameTop(RawFrameFront);
+ // emit SendRawFrameSide(RawFrameFront);
+  connect(timer,SIGNAL(timeout()),this,SLOT(update_window()));
+  timer->start(20);
 
   ui->actionDisplay_Top_Camera->setEnabled(true);
   ui->actionDisplay_Side_Camera->setEnabled(true);
@@ -264,6 +239,17 @@ void MainWindow::on_actionActivate_Cameras_triggered()
 
 
   ui->actionDetect_Color_Chips->setEnabled(true);
+
+}
+
+void MainWindow::update_window(){
+
+   RawFrameFront = server1.getImage();
+   RawFrameSide = serverSide.getImage();
+   emit SendRawFrameFront(RawFrameFront);
+   emit SendRawFrameTop(RawFrameSide);
+   emit SendRawFrameSide(RawFrameSide);
+   //imwrite("/Users/dnguyen/Desktop/SendRawFrameSide.png",RawFrameSide);
 
 }
 

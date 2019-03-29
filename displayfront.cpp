@@ -33,7 +33,7 @@ void displayFront::updateRawFrameFront(cv::Mat frame){
 void displayFront::displayframe(cv::Mat frame){
   QImage qImage((uchar*)frame.data,frame.cols,frame.rows,frame.step,QImage::Format_RGB888);
   ui->label->setPixmap(QPixmap::fromImage(qImage));
-  qDebug() << "HI";
+  //qDebug() << "HI";
 }
 
 

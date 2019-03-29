@@ -6,6 +6,8 @@ displayTop::displayTop(QWidget *parent) :
   ui(new Ui::displayTop)
 {
   ui->setupUi(this);
+  frame = cv::Mat(cv::Size(640, 480), CV_8UC3, cv::Scalar(192, 0, 0));
+
 }
 
 displayTop::~displayTop()

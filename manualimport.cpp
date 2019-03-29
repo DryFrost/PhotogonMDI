@@ -18,6 +18,7 @@ ManualImport::ManualImport(QWidget *parent) :
 {
   ui->setupUi(this);
   show();
+  ui->progressBar->setValue(0);
 
 }
 
@@ -78,6 +79,7 @@ void ManualImport::on_pushButton_3_clicked()
 
   Mat Blank = imread(ManualBackgroundPath.toUtf8().constData());
 
+  ui->progressBar->setMaximum(FileName.count());
   for(int i = 0; i<FileName.count(); i++){
       Mat Current = imread(FileName[i].toUtf8().constData());
       if(ManualSegMethod=="Background Subtraction"){
@@ -138,7 +140,112 @@ void ManualImport::on_pushButton_3_clicked()
           data.close();
 
         }
+      if(QFileInfo::exists(fileDir+"color.csv")){
+          qDebug()<<"File Exists";
 
+        }else{
+          QFile data(fileDir+"color.csv");
+
+          if(data.open(QIODevice::ReadWrite| QIODevice::Append)){
+              QTextStream out(&data);
+              out <<"FileName,";
+              for(int i=0; i<256;i++){
+                  out << "R."<<i<<",";
+                }
+              for(int i=0; i<256;i++){
+                  out << "G."<<i<<",";
+                }
+              for(int i=0; i<256;i++){
+                  out << "B."<<i<<",";
+                }
+              for(int i=0; i<256;i++){
+                  out << "L."<<i<<",";
+                }
+              for(int i=0; i<256;i++){
+                  out << "GM."<<i<<",";
+                }
+              for(int i=0; i<256;i++){
+                  out << "BY."<<i<<",";
+                }
+              for(int i=0; i<256;i++){
+                  out << "Hue."<<i<<",";
+                }
+              for(int i=0; i<256;i++){
+                  out << "Saturation."<<i<<",";
+                }
+              for(int i=0; i<256;i++){
+                  out << "Value."<<i<<",";
+                }
+              out << "\n";
+
+              data.close();
+            }
+
+        }
+
+      QFile dataA(fileDir+"color.csv");
+
+      if(dataA.open(QFile::WriteOnly | QIODevice::Append)){
+          QTextStream out(&dataA);
+          out<<PicName<<",";
+          for(int i=0; i<256;i++){
+              out << colorR.at<float>(i,0) <<",";
+            }
+          for(int i=0; i<256;i++){
+              out << colorG.at<float>(i,0) <<",";
+            }
+          for(int i=0; i<256;i++){
+              out << colorB.at<float>(i,0) <<",";
+            }
+          for(int i=0; i<256;i++){
+              out << colorL.at<float>(i,0) <<",";
+            }
+          for(int i=0; i<256;i++){
+              out << colorGM.at<float>(i,0) <<",";
+            }
+          for(int i=0; i<256;i++){
+              out << colorBY.at<float>(i,0) <<",";
+            }
+          for(int i=0; i<256;i++){
+              out << colorHue.at<float>(i,0) <<",";
+            }
+          for(int i=0; i<256;i++){
+              out << colorSaturation.at<float>(i,0) <<",";
+            }
+          for(int i=0; i<256;i++){
+              out << colorValue.at<float>(i,0) <<",";
+            }
+          out << "\n";
+
+          dataA.close();
+
+        }
+
+      int row = ui->tableWidget->rowCount();
+      ui->tableWidget->insertRow(row);
+      ui->tableWidget->setItem(row,0,new QTableWidgetItem(PicName));
+      ui->tableWidget->setItem(row,1,new QTableWidgetItem(shapes[0]));
+      ui->tableWidget->setItem(row,2,new QTableWidgetItem(shapes[1]));
+      ui->tableWidget->setItem(row,3,new QTableWidgetItem(shapes[2]));
+      ui->tableWidget->setItem(row,4,new QTableWidgetItem(shapes[3]));
+      ui->tableWidget->setItem(row,5,new QTableWidgetItem(shapes[4]));
+      ui->tableWidget->setItem(row,6,new QTableWidgetItem(shapes[5]));
+      ui->tableWidget->setItem(row,7,new QTableWidgetItem(shapes[6]));
+      ui->tableWidget->setItem(row,8,new QTableWidgetItem(shapes[7]));
+      ui->tableWidget->setItem(row,9,new QTableWidgetItem(shapes[8]));
+      ui->tableWidget->setItem(row,10,new QTableWidgetItem(shapes[9]));
+      ui->tableWidget->setItem(row,11,new QTableWidgetItem(shapes[10]));
+      ui->tableWidget->setItem(row,12,new QTableWidgetItem(shapes[11]));
+      ui->tableWidget->setItem(row,13,new QTableWidgetItem(shapes[12]));
+      ui->tableWidget->setItem(row,14,new QTableWidgetItem(shapes[13]));
+      ui->tableWidget->setItem(row,15,new QTableWidgetItem(shapes[14]));
+      ui->tableWidget->setItem(row,16,new QTableWidgetItem(shapes[15]));
+      ui->tableWidget->setItem(row,17,new QTableWidgetItem(shapes[16]));
+      ui->tableWidget->setItem(row,18,new QTableWidgetItem(shapes[17]));
+      ui->tableWidget->setItem(row,19,new QTableWidgetItem(shapes[18]));
+      ui->tableWidget->setItem(row,20,new QTableWidgetItem(shapes[19]));
+
+      ui->progressBar->setValue(i);
 
 
 

@@ -71,9 +71,14 @@ void ManualImportMask::on_pushButton_clicked()
 
   PlantPic = QFileDialog::getOpenFileName(this, tr("Files"), QDir::currentPath(), tr("*.jpg *.png"));
   currentFrame = imread(PlantPic.toUtf8().constData());
-  blank = imread(ManualBackgroundPath.toUtf8().constData());
-  connect(timer,SIGNAL(timeout()),this,SLOT(update_window()));
-  timer->start(20);
+  connect(ui->BluePlantThreshold,SIGNAL(sliderReleased()),this,SLOT(update_window()));
+  connect(ui->BluePlantBlur,SIGNAL(sliderReleased()),this,SLOT(update_window()));
+  connect(ui->GreenPlantThreshold,SIGNAL(sliderReleased()),this,SLOT(update_window()));
+  connect(ui->MaskBetaThreshold,SIGNAL(sliderReleased()),this,SLOT(update_window()));
+  connect(ui->MaskAlphaThresholdDark,SIGNAL(sliderReleased()),this,SLOT(update_window()));
+  connect(ui->MaskAlphaThresholdLight,SIGNAL(sliderReleased()),this,SLOT(update_window()));
+  //connect(timer,SIGNAL(timeout()),this,SLOT(update_window()));
+  //timer->start(20);
 
 }
 
@@ -357,6 +362,10 @@ void ManualImportMask::update_window(){
   threshold(split_lab[2], mask_b, BluePlantThreshold, 255,THRESH_BINARY);
   medianBlur(mask_b, mask_b, BluePlantBlur);
   mask_b=fill_holes3(mask_b);
+  Mat mask_b_dilate;
+  Mat mask_b_erode;
+  dilate(mask_b, mask_b_dilate, Mat(), Point(-1, -1), 3, 1, 1);
+  erode(mask_b_dilate,mask_b_erode, Mat(), Point(-1, -1), 1, 1, 1);
 
   Mat hsv;
   cvtColor(adjImage1, hsv, cv::COLOR_BGR2HSV);
@@ -364,11 +373,16 @@ void ManualImportMask::update_window(){
   split(hsv, split_hsv);
   Mat mask_s;
   threshold(split_hsv[1], mask_s, GreenPlantThreshold, 255, THRESH_BINARY);
-  medianBlur(mask_s, mask_s, GreenPlantBlur);
+  //medianBlur(mask_s, mask_s, GreenPlantBlur);
   mask_s=fill_holes3(mask_s);
+  Mat mask_s_dilate;
+  Mat mask_s_erode;
+  dilate(mask_s, mask_s_dilate, Mat(), Point(-1, -1), 3, 1, 1);
+  erode(mask_s_dilate,mask_s_erode, Mat(), Point(-1, -1), 1, 1, 1);
 
   Mat mask_erode;
-  bitwise_or(mask_b, mask_s, mask_erode);
+  bitwise_or(mask_b_erode, mask_s_erode, mask_erode);;
+  vector<Point> cc_PreLim = keep_roi3(mask_erode,Point(700,600),Point(1610,1390),mask_erode);
 
   Mat masked;
   adjImg.copyTo(masked,mask_erode);
@@ -386,51 +400,19 @@ void ManualImportMask::update_window(){
   Mat ab;
   bitwise_or(maskeda_thresh, maskedb_thresh, ab1);
   bitwise_or(maskeda_thresh1, ab1, ab);
-
-  Mat dest_lab;
-  cvtColor(adjImg,dest_lab,CV_BGR2Lab);
-  vector<Mat> channels_lab;
-  split(dest_lab,channels_lab);
-  Mat pot_thresh1;
-  inRange(channels_lab[2],b1LM,b1HM,pot_thresh1);
-  Mat pot_thresh2;
-  inRange(channels_lab[2],b2LM,b2HM,pot_thresh2);
-  Mat pot_or;
-  bitwise_or(pot_thresh1,pot_thresh2,pot_or);
-  Mat pot_dilate;
-  dilate(pot_or, pot_dilate, Mat(), Point(-1, -1), PotDilateKernelSize, 1, 1);
-  Mat pot_erode;
-  erode(pot_dilate,pot_erode, Mat(), Point(-1, -1), PotErodeKernelSize, 1, 1);
-  Mat pot_and;
-  bitwise_and(pot_erode,ab,pot_and);
-  Mat pot_roi;
-
-  vector<Point> cc_pot = keep_roi3(pot_and,Point(x1,y1),Point(x2,y2),pot_roi);
-
-  Mat inputImage_lab;
-  cvtColor(adjImg, inputImage_lab, CV_BGR2Lab);
-  vector<Mat> img_channels_lab;
-  split(inputImage_lab, img_channels_lab);
-  Mat b_thresh;
-  inRange(img_channels_lab[2],80,115,b_thresh);
-  Mat b_er;
-  erode(b_thresh,b_er, Mat(), Point(-1, -1), 1, 1, 1);
-  Mat b_roi;
-  vector<Point> cc1 = keep_roi3(b_er,Point(x1,y1),Point(x2,y2),b_roi);
-  Mat b_dil;
-  dilate(b_roi,b_dil,Mat(),Point(-1, -1), 6, 1, 1);
-  Mat b_xor = pot_roi - b_dil;
-
+  Mat fill1;
+  fill1 = fill_holes3(ab);
 
   Mat mask;
-  vector<Point> cc = keep_roi3(b_xor,Point(x1,y2),Point(x1,y2),mask);
+  vector<Point> cc = keep_roi3(fill1,Point(800,0),Point(1810,1480),mask);
 
   Size size(300,200);
 
 
-  cv::resize(pot_and,pot_and,size);
-  QImage qt_imageM = QImage((const unsigned char*)(pot_and.data),pot_and.cols,pot_and.rows,QImage::Format_Indexed8);
+  cv::resize(mask,mask,size);
+  QImage qt_imageM = QImage((const unsigned char*)(mask.data),mask.cols,mask.rows,QImage::Format_Indexed8);
   ui->maskM->setPixmap(QPixmap::fromImage(qt_imageM));
+
 
 }
 

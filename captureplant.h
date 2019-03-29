@@ -14,7 +14,8 @@
 #include <QtCore>
 #include <computervision.h>
 #include <QTimer>
-
+#include <myudp.h>
+#include <mytcp.h>
 namespace Ui {
   class capturePlant;
 }
@@ -31,6 +32,7 @@ public slots:
     void updateRawFrameTop(cv::Mat frame);
     void updateRawFrameFront(cv::Mat frame);
     void updateRawFrameSide(cv::Mat frame);
+
 private slots:
     void on_pushButton_3_clicked();
 
@@ -168,6 +170,10 @@ private:
   bool Round;
   bool AR;
 
+  bool statTop;
+  bool statFront;
+  bool statSide;
+
   QTimer *timer;
   std::vector<double> shapesTop;
   std::vector<double> shapesFront;
@@ -206,6 +212,10 @@ private:
   Mat TopcolorHue;
   Mat TopcolorSaturation;
   Mat TopcolorValue;
+
+  MyUDP* udpCP;
+  MyTCP server2;
+
 
 
 };

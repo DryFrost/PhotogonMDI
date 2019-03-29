@@ -87,7 +87,9 @@ SOURCES += \
     manualroi.cpp \
     manualimportmask.cpp \
     manualcomputervisionsubtraction.cpp \
-    manualcomputervision.cpp
+    manualcomputervision.cpp \
+    mytcp.cpp \
+    mytcpside.cpp
 
 HEADERS += \
     mainwindow.h \
@@ -131,7 +133,9 @@ HEADERS += \
     manualroi.h \
     manualimportmask.h \
     manualcomputervisionsubtraction.h \
-    manualcomputervision.h
+    manualcomputervision.h \
+    mytcp.h \
+    mytcpside.h
 
 FORMS += \
     mainwindow.ui \

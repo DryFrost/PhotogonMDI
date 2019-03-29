@@ -19,6 +19,7 @@ public slots:
 
 private:
   Ui::displayTop *ui;
+  cv::Mat frame;
 };
 
 #endif // DISPLAYTOP_H
