@@ -1,15 +1,15 @@
-#include "mytcp.h"
+#include "mytcptop.h"
 #include <QDebug>
 #include <QCoreApplication>
 #include <opencv2/opencv.hpp>
 using namespace cv;
 
-MyTCP::MyTCP(QObject *parent) :
+MyTCPTop::MyTCPTop(QObject *parent) :
     QObject(parent)
 {
   connect(&server,SIGNAL(newConnection()),
           this,SLOT(acceptConnection1()));
-  server.listen(QHostAddress::Any,8888);
+  server.listen(QHostAddress::Any,8886);
   tmr = new QTimer();
   tmr->setInterval(18000);
   connect(tmr,SIGNAL(timeout()),
@@ -19,33 +19,29 @@ MyTCP::MyTCP(QObject *parent) :
 
 
 }
-MyTCP::~MyTCP()
+MyTCPTop::~MyTCPTop()
 {
   server.close();
 }
-void MyTCP::acceptConnection1()
+void MyTCPTop::acceptConnection1()
 {
+  qDebug()<<"Made Connection With Side";
   client = server.nextPendingConnection();
   connect(client,SIGNAL(readyRead()),this,SLOT(startRead()));
 
 }
-cv::Mat MyTCP::getImage(){
+cv::Mat MyTCPTop::getImage(){
 
 
   return Img;
 }
 
-void MyTCP::setStatusBar(QStatusBar *StatusBar)
+void MyTCPTop::setStatusBar(QStatusBar *StatusBar)
 {
   pStatusBar = StatusBar;
 }
 
-cv::Mat qimage_to_mat_ref1(QImage &img, int format)
-{
-    return cv::Mat(img.height(), img.width(),
-            format, img.bits(), img.bytesPerLine());
-}
-cv::Mat3b QImage2Mat(const QImage &src) {
+cv::Mat3b QImage2MatTop(const QImage &src) {
   unsigned int height = src.height();
   unsigned int width = src.width();
 
@@ -60,7 +56,7 @@ cv::Mat3b QImage2Mat(const QImage &src) {
   return dest;
 }
 
-void MyTCP::timeIsOver(){
+void MyTCPTop::timeIsOver(){
   QBuffer buffer(&bufferAll);
   if(bufferAll.isEmpty())
     return;
@@ -68,14 +64,14 @@ void MyTCP::timeIsOver(){
   myImage.load(&buffer,"PNG");
   //bool Sat = true;
   //emit finishedF(Sat);
-  Img = QImage2Mat(myImage);
-  imwrite("/Users/dnguyen/desktop/CapFront.png",Img);
-  pStatusBar->showMessage("Image Front Recieved");
-  //qDebug() << "Image is Got";
+  Img = QImage2MatTop(myImage);
+  imwrite("/Users/dnguyen/desktop/CapSide.png",Img);
+  pStatusBar->showMessage("Image Side Recieved");
+  qDebug() << "Image Side Got";
   StartRead = false;
   client->close();
 }
-void MyTCP::startRead(){
+void MyTCPTop::startRead(){
   if(!StartRead){
       tmr->start();
       bufferAll.clear();
@@ -87,5 +83,5 @@ void MyTCP::startRead(){
       ba = client->readAll();
       bufferAll.append(ba);
     }
-  qDebug() << "Total Front: " << bufferAll.size();
+  qDebug() << "Total Side: " << bufferAll.size();
 }

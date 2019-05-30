@@ -12,8 +12,19 @@ MainWindow::MainWindow(QWidget *parent) :
   //RawFrameTop = server1.getImage();
   server1.setStatusBar(ui->statusbar);
   serverSide.setStatusBar(ui->statusbar);
+  serverTop.setStatusBar(ui->statusbar);
+  timer = new QTimer(this);
+  connect(timer,SIGNAL(timeout()),this,SLOT(update_window()));
+  timer->start(20);
   mInternal = new QSettings("internal.ini",QSettings::IniFormat);
-    timer = new QTimer(this);
+
+    ui->actionDisplay_Top_Camera->setEnabled(true);
+    ui->actionDisplay_Side_Camera->setEnabled(true);
+    ui->actionDisplay_Front_Camera->setEnabled(true);
+    ui->actionModify_Mask_Properties->setEnabled(true);
+    ui->actionModify_Region_of_Intrest->setEnabled(true);
+    ui->actionDetect_Color_Chips->setEnabled(true);
+
 
   mMenuRecentFiles = new QMenu(this);
   for (int n=0; n<maxRecentFiles;++n){
@@ -217,28 +228,21 @@ void MainWindow::on_actionModify_Mask_Properties_triggered()
 void MainWindow::on_actionActivate_Cameras_triggered()
 {
 
-//  udp = new MyUDP(this);
 
- // QString command = "Capture";
- // udp->deviceDiscover(command);
- // RawFrameFront = server1.getImage();
- // emit SendRawFrameFront(RawFrameFront);
- // emit SendRawFrameTop(RawFrameFront);
- // emit SendRawFrameSide(RawFrameFront);
-  connect(timer,SIGNAL(timeout()),this,SLOT(update_window()));
-  timer->start(20);
+  //connect(timer,SIGNAL(timeout()),this,SLOT(update_window()));
+  //timer->start(20);
 
-  ui->actionDisplay_Top_Camera->setEnabled(true);
-  ui->actionDisplay_Side_Camera->setEnabled(true);
-  ui->actionDisplay_Front_Camera->setEnabled(true);
-  ui->actionModify_Mask_Properties->setEnabled(true);
-  ui->actionModify_Region_of_Intrest->setEnabled(true);
-  if(!ColorStandardization){
-      ui->actionOpen_Camera->setEnabled(true);
-    }
+  //ui->actionDisplay_Top_Camera->setEnabled(true);
+  //ui->actionDisplay_Side_Camera->setEnabled(true);
+  //ui->actionDisplay_Front_Camera->setEnabled(true);
+  //ui->actionModify_Mask_Properties->setEnabled(true);
+  //ui->actionModify_Region_of_Intrest->setEnabled(true);
+  //if(!ColorStandardization){
+   //   ui->actionOpen_Camera->setEnabled(true);
+   // }
 
 
-  ui->actionDetect_Color_Chips->setEnabled(true);
+  //ui->actionDetect_Color_Chips->setEnabled(true);
 
 }
 
@@ -246,10 +250,11 @@ void MainWindow::update_window(){
 
    RawFrameFront = server1.getImage();
    RawFrameSide = serverSide.getImage();
+   RawFrameTop = serverTop.getImage();
+
    emit SendRawFrameFront(RawFrameFront);
-   emit SendRawFrameTop(RawFrameSide);
+   emit SendRawFrameTop(RawFrameTop);
    emit SendRawFrameSide(RawFrameSide);
-   //imwrite("/Users/dnguyen/Desktop/SendRawFrameSide.png",RawFrameSide);
 
 }
 
@@ -340,8 +345,8 @@ void MainWindow::on_actionDetect_Cameras_triggered()
 
 void MainWindow::on_actionLoad_Cameras_triggered()
 {
-  mConnectCameras = new connectCameras(this);
-  loadSubWindow(mConnectCameras);
+  //mConnectCameras = new connectCameras(this);
+  //loadSubWindow(mConnectCameras);
 }
 
 void MainWindow::on_actionImport_Images_triggered()

@@ -191,10 +191,13 @@ void capturePlant::on_pushButton_3_clicked()
   udpCP->deviceDiscover(command);
   delay(45000);
   qDebug()<<"Got it";
-  blankTop=rawTop;
-  blankSide=rawSide;
+  //blankTop=imread("/Users/dnguyen/Desktop/BlankTop.png");
+  //blankSide=imread("/Users/dnguyen/Desktop/BlankSide.png");
+  //blankFront=imread("/Users/dnguyen/Desktop/BlankFront.png");
+  blankTop=rawSide;
+  blankSide=rawTop;
   blankFront=rawFront;
-  imwrite("/Users/dnguyen/Desktop/BlankTop.png",blankTop);
+  //imwrite("/Users/dnguyen/Desktop/BlankTop.png",blankTop);
 
   //ui->pushButton_3->setEnabled(false);
   ui->pushButton_4->setEnabled(true);
@@ -205,10 +208,12 @@ void capturePlant::on_pushButton_3_clicked()
   Mat disSide;
 
   cv::Size size(164,150);
-  cv::resize(blankFront,disTop,size);
+  cv::resize(blankTop,disTop,size);
   cv::cvtColor(disTop,disTop,cv::COLOR_BGR2RGB);
+
   cv::resize(blankSide,disSide,size);
   cv::cvtColor(disSide,disSide,cv::COLOR_BGR2RGB);
+
   cv::resize(blankFront,disFront,size);
   cv::cvtColor(disFront,disFront,cv::COLOR_BGR2RGB);
 
@@ -228,9 +233,12 @@ void capturePlant::on_pushButton_clicked()
   QString command = "Capture";
   udpCP->deviceDiscover(command);
   delay(45000);
-  accTop=server2.getImage();;
-  accSide=server2.getImage();;
-  accFront=server2.getImage();;
+  //accTop=imread("/Users/dnguyen/Desktop/CapTop.png");
+  //accSide=imread("/Users/dnguyen/Desktop/CapSide.png");
+  //accFront=imread("/Users/dnguyen/Desktop/CapFront.png");
+  accTop=rawSide;
+  accSide=rawTop;
+  accFront=rawFront;
 
   ImageScanner scanner;
   scanner.set_config(ZBAR_QRCODE,ZBAR_CFG_ENABLE,1);
@@ -258,7 +266,7 @@ void capturePlant::on_pushButton_clicked()
   cv::cvtColor(disSide,disSide,cv::COLOR_BGR2RGB);
   cv::resize(accFront,disFront,size);
   cv::cvtColor(disFront,disFront,cv::COLOR_BGR2RGB);
-
+  qDebug()<<"Crash 1";
 
   QImage Front((uchar*)disFront.data,disFront.cols,disFront.rows,disFront.step,QImage::Format_RGB888);
   QImage Side((uchar*)disSide.data,disSide.cols,disSide.rows,disSide.step,QImage::Format_RGB888);
@@ -267,36 +275,44 @@ void capturePlant::on_pushButton_clicked()
   ui->label->setPixmap(QPixmap::fromImage(Front));
   ui->label_2->setPixmap(QPixmap::fromImage(Side));
   ui->label_3->setPixmap(QPixmap::fromImage(Top));
-
+qDebug()<<"Crash 2";
 
   ComputerVision cvA;
 
-  Mat noFBG = cvA.remove_background(rawFront,blankFront,FblurKM,FtLowM,FtHighM,Fb1LM,Fb1HM,Fb2LM,Fb2HM,x1Front,y1Front,x2Front,y2Front,"Front",
+  Mat noFBG = cvA.remove_background(accFront,blankFront,FblurKM,FtLowM,FtHighM,Fb1LM,Fb1HM,Fb2LM,Fb2HM,363,309,2040,1463,"Front",
                                     ColorStandardization,BluePlantThresholdFront,BluePlantBlurFront,GreenPlantThresholdFront,GreenPlantBlurFront,MaskAlphaThresholdDarkFront,MaskAlphaThresholdLightFront,
                                     MaskBetaThresholdFront,DifferenceDilateKernelSizeFront,DifferenceErodeKernelSizeFront,PotDilateKernelSizeFront,PotErodeKernelSizeFront);
-  Mat noTBG = cvA.remove_background(rawTop,blankTop,TblurKM,TtLowM,TtHighM,Tb1LM,Tb1HM,Tb2LM,Tb2HM,x1Top,y1Top,x2Top,y2Top,"Top",
+  Mat noTBG = cvA.remove_background(accTop,blankTop,TblurKM,TtLowM,TtHighM,Tb1LM,Tb1HM,Tb2LM,Tb2HM,255,55,2070,1655,"Top",
                                     ColorStandardization,BluePlantThresholdTop,BluePlantBlurTop,GreenPlantThresholdTop,GreenPlantBlurTop,MaskAlphaThresholdDarkTop,MaskAlphaThresholdLightTop,
                                     MaskBetaThresholdTop,DifferenceDilateKernelSizeTop,DifferenceErodeKernelSizeTop,PotDilateKernelSizeTop,PotErodeKernelSizeTop);
-  Mat noSBG = cvA.remove_background(rawSide,blankSide,SblurKM,StLowM,StHighM,Sb1LM,Sb1HM,Sb2LM,Sb2HM,x1Side,y1Side,x2Side,y2Side,"Side",
+  Mat noSBG = cvA.remove_background(accSide,blankSide,SblurKM,StLowM,StHighM,Sb1LM,Sb1HM,Sb2LM,Sb2HM,944,308,1780,1150,"Side",
                                     ColorStandardization,BluePlantThresholdSide,BluePlantBlurSide,GreenPlantThresholdSide,GreenPlantBlurSide,MaskAlphaThresholdDarkSide,MaskAlphaThresholdLightSide,
                                     MaskBetaThresholdSide,DifferenceDilateKernelSizeSide,DifferenceErodeKernelSizeSide,PotDilateKernelSizeSide,PotErodeKernelSizeSide);
 
-  std::vector<Point> ccFront = cvA.get_cc(noFBG,x1Front,y1Front,x2Front,y2Front);
-  std::vector<Point> ccTop = cvA.get_cc(noTBG,x1Top,y1Top,x2Top,y2Top);
-  std::vector<Point> ccSide = cvA.get_cc(noSBG,x1Side,y1Side,x2Side,y2Side);
-
+   imwrite("/Users/dnguyen/Desktop/noFBG.png",noFBG);
+   imwrite("/Users/dnguyen/Desktop/noTBG.png",noTBG);
+   imwrite("/Users/dnguyen/Desktop/noSBG.png",noSBG);
+  qDebug()<<"Crash 3";
+  std::vector<Point> ccFront = cvA.get_cc(noFBG,363,309,2040,1463);
+  std::vector<Point> ccTop = cvA.get_cc(noTBG,255,55,2070,1655);
+  std::vector<Point> ccSide = cvA.get_cc(noSBG,944,308,1780,1150);
+  qDebug()<<"Crash 4";
   shapesTop = cvA.get_shapes(ccTop,noTBG);
   shapesFront = cvA.get_shapes(ccFront,noFBG);
   shapesSide = cvA.get_shapes(ccSide,noSBG);
+qDebug()<<"Crash 5";
+  //Mat shapesImageTop = cvA.drawShapes(accTop,ccTop);
+  qDebug()<<"CC1";
 
-  Mat shapesImageTop = cvA.drawShapes(accTop,ccTop);
-  Mat shapesImageFront = cvA.drawShapes(accFront,ccFront);
-  Mat shapesImageSide = cvA.drawShapes(accSide,ccSide);
+  //Mat shapesImageFront = cvA.drawShapes(accFront,ccFront);
+  qDebug()<<"CC2";
 
+  //Mat shapesImageSide = cvA.drawShapes(accSide,ccSide);
+qDebug()<<"Crash 6";
   HistogramImageTop = cvA.get_RGB_HIST(accTop,noTBG);
   HistogramImageFront = cvA.get_RGB_HIST(accFront,noFBG);
   HistogramImageSide = cvA.get_RGB_HIST(accSide,noSBG);
-
+qDebug()<<"Crash 7";
   FrontcolorR=cvA.get_color_R(accFront,noFBG);
   FrontcolorG=cvA.get_color_G(accFront,noFBG);
   FrontcolorB=cvA.get_color_B(accFront,noFBG);
@@ -306,7 +322,7 @@ void capturePlant::on_pushButton_clicked()
   FrontcolorHue=cvA.get_color_Hue(accFront,noFBG);
   FrontcolorSaturation=cvA.get_color_Saturation(accFront,noFBG);
   FrontcolorValue=cvA.get_color_Value(accFront,noFBG);
-
+qDebug()<<"Crash 8";
   SidecolorR=cvA.get_color_R(accSide,noSBG);
   SidecolorG=cvA.get_color_G(accSide,noSBG);
   SidecolorB=cvA.get_color_B(accSide,noSBG);
@@ -316,7 +332,7 @@ void capturePlant::on_pushButton_clicked()
   SidecolorHue=cvA.get_color_Hue(accSide,noSBG);
   SidecolorSaturation=cvA.get_color_Saturation(accSide,noSBG);
   SidecolorValue=cvA.get_color_Value(accSide,noSBG);
-
+qDebug()<<"Crash 9";
   TopcolorR=cvA.get_color_R(accTop,noTBG);
   TopcolorG=cvA.get_color_G(accTop,noTBG);
   TopcolorB=cvA.get_color_B(accTop,noTBG);
@@ -327,9 +343,9 @@ void capturePlant::on_pushButton_clicked()
   TopcolorSaturation=cvA.get_color_Saturation(accTop,noTBG);
   TopcolorValue=cvA.get_color_Value(accTop,noTBG);
 
-  emit sendShapeTop(shapesImageTop);
-  emit sendShapeFront(shapesImageFront);
-  emit sendShapeSide(shapesImageSide);
+  //emit sendShapeTop(shapesImageTop);
+  //emit sendShapeFront(shapesImageFront);
+  //emit sendShapeSide(shapesImageSide);
 
   emit sendMaskTop(noTBG);
   emit sendMaskFront(noFBG);

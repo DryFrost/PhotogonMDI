@@ -30,6 +30,7 @@
 #include "manualimport.h"
 #include "mytcp.h"
 #include "mytcpside.h"
+#include "mytcptop.h"
 #include <QTimer>
 
 
@@ -49,6 +50,7 @@ class connectCameras;
 class ManualImport;
 class MyTCP;
 class MyTCPSide;
+class MyTCPTop;
 
 
 namespace Ui {
@@ -171,6 +173,7 @@ private:
   MyUDP* udp;
   MyTCP server1;
   MyTCPSide serverSide;
+  MyTCPTop serverTop;
     QTimer *timer;
 };
 

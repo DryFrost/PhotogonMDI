@@ -356,62 +356,80 @@ vector<double> ComputerVision::get_shapes(const vector<Point>& cc,const Mat& mas
     //-- Get measurements
     Moments mom = moments(mask,true);
     double area = mom.m00;
-    convexHull( Mat(cc), hull, false );
-    double hull_verticies = hull.size();
-    double hull_area = contourArea(Mat(hull));
-    double solidity = area/hull_area;
-    double perimeter = arcLength(Mat(cc),false);
-    cmx = mom.m10 / mom.m00;
-    cmy = mom.m01 / mom.m00;
-    Rect boundRect = boundingRect( cc );
-    width = boundRect.width;
-    height = boundRect.height;
-    x = boundRect.x;
-    y = boundRect.y;
-    double circ = 4*M_PI*area/(perimeter*perimeter);
-    double angle = -1;
-    double ex = -1;
-    double ey = -1;
-    double emajor = -1;
-    double eminor = -1;
-    double eccen = -1;
-    double round = -1;
-    double ar = -1;
-    if(cc.size() >= 6){
-        Mat pointsf;
-        Mat(cc).convertTo(pointsf, CV_32F);
-        RotatedRect ellipse = fitEllipse(pointsf);
-        angle = ellipse.angle;
-        ex = ellipse.center.x;
-        ey = ellipse.center.y;
-        if(ellipse.size.height > ellipse.size.width){
-            emajor = ellipse.size.height;
-            eminor = ellipse.size.width;
-        }else{
-            eminor = ellipse.size.height;
-            emajor = ellipse.size.width;
-        }
-        eccen = sqrt((1- eminor / emajor)*2);
-        round = eminor/emajor;
-        ar = emajor/eminor;
+    if(area>0){
+        vector<Point>hull;
+        convexHull( Mat(cc), hull, false );
+        double hull_verticies = hull.size();
+        double hull_area = contourArea(Mat(hull));
+        double solidity = area/hull_area;
+        double perimeter = arcLength(Mat(cc),false);
+        cmx = mom.m10 / mom.m00;
+        cmy = mom.m01 / mom.m00;
+        Rect boundRect = boundingRect( cc );
+        width = boundRect.width;
+        height = boundRect.height;
+        x = boundRect.x;
+        y = boundRect.y;
+        double circ = 4*M_PI*area/(perimeter*perimeter);
+        double angle = -1;
+        double ex = -1;
+        double ey = -1;
+        double emajor = -1;
+        double eminor = -1;
+        double eccen = -1;
+        double round = -1;
+        double ar = -1;
+        if(cc.size() >= 6){
+          Mat pointsf;
+          Mat(cc).convertTo(pointsf, CV_32F);
+            RotatedRect ellipse = fitEllipse(pointsf);
+            angle = ellipse.angle;
+            ex = ellipse.center.x;
+            ey = ellipse.center.y;
+            if(ellipse.size.height > ellipse.size.width){
+              emajor = ellipse.size.height;
+              eminor = ellipse.size.width;
+            }else{
+              eminor = ellipse.size.height;
+              emajor = ellipse.size.width;
+            }
+            eccen = sqrt((1- eminor / emajor)*2);
+            round = eminor/emajor;
+            ar = emajor/eminor;
     }
     float fd = get_fd(mask);
     double oof = is_oof(mask);
     double shapes[22] = {area,hull_area,solidity,perimeter,width,height,cmx,cmy,hull_verticies,ex,ey,emajor,eminor,angle,eccen,circ,round,ar,x,y,fd,oof};
     vector<double> shapes_v(shapes,shapes+22);
     return shapes_v;
+      }else{
+        double shapes[22] = {0,0,-nan("1"),0,0,0,-nan("1"),-nan("1"),0,-1,-1,-1,-1,-1,-1,-nan("1"),-1,-1,0,0,-nan("1"),0};
+        vector<double> shapes_v(shapes,shapes+22);
+        return shapes_v;
+      }
 }
 
 Mat ComputerVision::drawShapes(Mat org, const vector<Point>& cc){
     vector<vector<Point>> tmp;
     vector<vector<Point>> tmp1;
+    qDebug()<<"CV_2A";
     tmp.push_back(hull);
+    qDebug()<<"CV_2A1";
     tmp1.push_back(cc);
+    qDebug()<<"CV_2A2";
     drawContours(org, tmp1,-1,Scalar(0,0,255),1);
+    qDebug()<<"CV_2A3";
     drawContours(org, tmp,-1,Scalar(255,0,0),1);
+    qDebug()<<"CV_2b";
     cv::line(org, Point(x,y), Point(x+width,y), Scalar(0,0,255),2);
+    qDebug()<<"CV_2c";
+
     cv::line(org,Point(cmx,y),Point(cmx,y+height),Scalar(0,0,255),2);
+    qDebug()<<"CV_2d";
+
     cv::circle(org, Point(cmx,cmy), 10, Scalar(0,0,255),2);
+    qDebug()<<"CV_2f";
+
     return org;
 }
 
@@ -671,31 +689,63 @@ Mat ComputerVision::remove_background(const Mat& img, const Mat& blank, int blur
   if(ColorStandardization==false){
       adjImg = img;
     }
+  //imwrite("/Users/dnguyen/Desktop/adjImg.png",adjImg);
+  //imwrite("/Users/dnguyen/Desktop/blank.png",blank);
 
-
-
+  qDebug()<<"Crash CV1";
+  Mat dest;
+  absdiff(blank,adjImg,dest);
+  qDebug()<<"Crash CV1a";
+  vector<Mat> channels(3);
+    qDebug()<<"Crash CV1b";
+  split(dest,channels);
+    qDebug()<<"Crash CV1c";
+  Mat dest_blur;
+  blur(channels[1],dest_blur,Size(2,2));
+    qDebug()<<"Crash CV1d";
+  Mat dest_thresh;
+  threshold(dest_blur,dest_thresh,25,255,THRESH_BINARY);
+    qDebug()<<"Crash CV1e";
+  Mat dest_dilate;
+  dilate(dest_thresh,dest_dilate,Mat(), Point(-1,-1),5,1,1);
+    qDebug()<<"Crash CV1f";
+  Mat dest_erode;
+  erode(dest_dilate,dest_erode,Mat(),Point(-1,-1),4,1,1);
+  qDebug()<<"Crash CV2";
+  Mat plantDest;
+  adjImg.copyTo(plantDest,dest_erode);
+  qDebug()<<"Crash CV3";
   Mat lab;
-  Mat adjImage1 = adjImg.clone();
+  Mat adjImage1 = plantDest.clone();
   cvtColor(adjImage1, lab, cv::COLOR_BGR2Lab);
   vector<Mat> split_lab;
   split(lab,split_lab);
   Mat mask_b;
-  threshold(split_lab[2], mask_b, BluePlantThreshold, 255,THRESH_BINARY);
-  medianBlur(mask_b, mask_b, BluePlantBlur);
+  threshold(split_lab[2], mask_b, 135, 255,THRESH_BINARY);
+  medianBlur(mask_b, mask_b, 3);
   mask_b=fill_holes(mask_b);
-
+  Mat mask_b_dilate;
+  Mat mask_b_erode;
+  dilate(mask_b,mask_b_dilate,Mat(), Point(-1,-1),3,1,1);
+  erode(mask_b_dilate,mask_b_erode,Mat(),Point(-1,-1),1,1,1);
+   qDebug()<<"Crash CV4";
   Mat hsv;
   cvtColor(adjImage1, hsv, cv::COLOR_BGR2HSV);
   vector<Mat> split_hsv;
   split(hsv, split_hsv);
   Mat mask_s;
-  threshold(split_hsv[1], mask_s, GreenPlantThreshold, 255, THRESH_BINARY);
-  medianBlur(mask_s, mask_s, GreenPlantBlur);
+  threshold(split_hsv[1], mask_s, 65, 255, THRESH_BINARY);
+  //medianBlur(mask_s, mask_s, GreenPlantBlur);
   mask_s=fill_holes(mask_s);
-
+  Mat mask_s_dilate;
+  Mat mask_s_erode;
+  dilate(mask_s,mask_s_dilate,Mat(),Point(-1,-1),3,1,1);
+  erode(mask_s_dilate,mask_s_erode,Mat(),Point(-1,-1),1,1,1);
+   qDebug()<<"Crash CV5";
   Mat mask_erode;
-  bitwise_or(mask_b, mask_s, mask_erode);
-
+  bitwise_or(mask_b_erode, mask_s_erode, mask_erode);
+  vector<Point> cc_PreLim = keep_roi(mask_erode,Point(x1,y1),Point(x2,y2),mask_erode);
+ qDebug()<<"Crash CV6";
   Mat masked;
   adjImg.copyTo(masked,mask_erode);
   Mat masked_a;
@@ -703,74 +753,24 @@ Mat ComputerVision::remove_background(const Mat& img, const Mat& blank, int blur
   vector<Mat> split_lab_a;
   split(masked_a,split_lab_a);
   Mat maskeda_thresh;
-  threshold(split_lab_a[1], maskeda_thresh, MaskAlphaThresholdDark, 255, THRESH_BINARY_INV);
+  threshold(split_lab_a[1], maskeda_thresh, 115, 255, THRESH_BINARY_INV);
   Mat maskeda_thresh1;
-  threshold(split_lab_a[1], maskeda_thresh1, MaskAlphaThresholdLight, 255, THRESH_BINARY);
+  threshold(split_lab_a[1], maskeda_thresh1, 135, 255, THRESH_BINARY);
   Mat maskedb_thresh;
-  threshold(split_lab_a[2], maskedb_thresh, MaskBetaThreshold, 255, THRESH_BINARY);
+  threshold(split_lab_a[2], maskedb_thresh, 128, 255, THRESH_BINARY);
   Mat ab1;
   Mat ab;
   bitwise_or(maskeda_thresh, maskedb_thresh, ab1);
   bitwise_or(maskeda_thresh1, ab1, ab);
-
-
-  Mat dest;
-  absdiff(blank,adjImg,dest);
-  vector<Mat> channels(3);
-  split(dest,channels);
-  Mat dest_blur;
-  blur(channels[1],dest_blur,Size(blurKM,blurKM));
-  Mat dest_thresh;
-  threshold(dest_blur,dest_thresh,tLowM,tHighM,THRESH_BINARY);
-  Mat dest_dilate;
-  dilate(dest_thresh,dest_dilate,Mat(), Point(-1,-1),DifferenceDilateKernelSize,1,1);
-  Mat dest_erode;
-  erode(dest_dilate,dest_erode,Mat(),Point(-1,-1),DifferenceErodeKernelSize,1,1);
-
-  Mat mask_and_Sub;
-  bitwise_and(ab, dest_erode, mask_and_Sub);
-
-
-  Mat dest_lab;
-  cvtColor(dest,dest_lab,CV_BGR2Lab);
-  vector<Mat> channels_lab;
-  split(dest_lab,channels_lab);
-  Mat pot_thresh1;
-  inRange(channels_lab[2],b1LM,b1HM,pot_thresh1);
-  Mat pot_thresh2;
-  inRange(channels_lab[2],b2LM,b2HM,pot_thresh2);
-  Mat pot_or;
-  bitwise_or(pot_thresh1,pot_thresh2,pot_or);
-  Mat pot_dilate;
-  dilate(pot_or, pot_dilate, Mat(), Point(-1, -1), PotDilateKernelSize, 1, 1);
-  Mat pot_erode;
-  erode(pot_dilate,pot_erode, Mat(), Point(-1, -1), PotErodeKernelSize, 1, 1);
-  Mat pot_and;
-  bitwise_and(pot_erode,mask_and_Sub,pot_and);
-  Mat pot_roi;
-  vector<Point> cc_pot = keep_roi(pot_and,Point(x1,y1),Point(x2,y2),pot_roi);
-
-  Mat inputImage_lab;
-  cvtColor(adjImg, inputImage_lab, CV_BGR2Lab);
-  vector<Mat> img_channels_lab;
-  split(inputImage_lab, img_channels_lab);
-  Mat b_thresh;
-  inRange(img_channels_lab[2],80,115,b_thresh);
-  Mat b_er;
-  erode(b_thresh,b_er, Mat(), Point(-1, -1), 1, 1, 1);
-  Mat b_roi;
-  vector<Point> cc1 = keep_roi(b_er,Point(x1,y1),Point(x2,y2),b_roi);
-  Mat b_dil;
-  dilate(b_roi,b_dil,Mat(),Point(-1, -1), 6, 1, 1);
-  Mat b_xor = pot_roi - b_dil;
-
-
-
-
+  Mat fill1;
+  fill1 = fill_holes(ab);
+   qDebug()<<"Crash CV7";
   Mat mask;
-  vector<Point> cc = keep_roi(b_xor,Point(x1,y2),Point(x1,y2),mask);
 
-  return pot_and;
+  vector<Point> cc = keep_roi(fill1,Point(x1,y1),Point(x2,y2),mask);
+  medianBlur(mask,mask,3);
+   qDebug()<<"Crash CV8";
+  return mask;
 
 }
 

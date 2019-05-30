@@ -29,7 +29,7 @@ listCapturePlant::listCapturePlant(QWidget *parent) :
   treatmentList = setup.value("treatmentList").value<QStringList>();
   treatmentNumList = setup.value("treatmentNumList").value<QStringList>();
   model = setup.value("model").value<QStringList>();
-
+  udpCP = new MyUDP(this);
   numList = list2IntA(treatmentNumList);
 
   FtLowM = setup.value("FtLowM").value<int>();
@@ -162,11 +162,30 @@ void listCapturePlant::updateRawFrameSide(cv::Mat frame){
   rawSide = frame;
 }
 
+void delay1( int millisecondsToWait )
+{
+    QTime dieTime = QTime::currentTime().addMSecs( millisecondsToWait );
+    while( QTime::currentTime() < dieTime )
+    {
+        QCoreApplication::processEvents( QEventLoop::AllEvents, 100 );
+    }
+}
+
 void listCapturePlant::on_captureBlank_clicked()
 {
-  blankTop=rawTop;
-  blankSide=rawSide;
+
+  QString command = "Capture";
+  udpCP->deviceDiscover(command);
+  delay1(45000);
+  qDebug()<<"Got it";
+  //blankTop=imread("/Users/dnguyen/Desktop/BlankTop.png");
+  //blankSide=imread("/Users/dnguyen/Desktop/BlankSide.png");
+  //blankFront=imread("/Users/dnguyen/Desktop/BlankFront.png");
+  blankTop=rawSide;
+  blankSide=rawTop;
   blankFront=rawFront;
+
+
 
   QString instructions;
 
@@ -177,9 +196,17 @@ void listCapturePlant::on_captureBlank_clicked()
 void listCapturePlant::on_capturePlant_clicked()
 {
 
-  accTop=rawTop;
-  accSide=rawSide;
+
+  QString command = "Capture";
+  udpCP->deviceDiscover(command);
+  delay1(48000);
+  //accTop=imread("/Users/dnguyen/Desktop/CapTop.png");
+  //accSide=imread("/Users/dnguyen/Desktop/CapSide.png");
+  //accFront=imread("/Users/dnguyen/Desktop/CapFront.png");
+  accTop=rawSide;
+  accSide=rawTop;
   accFront=rawFront;
+
 
   Mat disTop;
   Mat disSide;
@@ -205,20 +232,24 @@ void listCapturePlant::on_capturePlant_clicked()
 
   ComputerVision cvA;
 
-  Mat noFBG = cvA.remove_background(rawFront,blankFront,FblurKM,FtLowM,FtHighM,Fb1LM,Fb1HM,Fb2LM,Fb2HM,x1Front,y1Front,x2Front,y2Front,"Front",
+  Mat noFBG = cvA.remove_background(accFront,blankFront,FblurKM,FtLowM,FtHighM,Fb1LM,Fb1HM,Fb2LM,Fb2HM,363,309,2040,1463,"Front",
                                     ColorStandardization,BluePlantThresholdFront,BluePlantBlurFront,GreenPlantThresholdFront,GreenPlantBlurFront,MaskAlphaThresholdDarkFront,MaskAlphaThresholdLightFront,
                                     MaskBetaThresholdFront,DifferenceDilateKernelSizeFront,DifferenceErodeKernelSizeFront,PotDilateKernelSizeFront,PotErodeKernelSizeFront);
-  Mat noTBG = cvA.remove_background(rawTop,blankTop,TblurKM,TtLowM,TtHighM,Tb1LM,Tb1HM,Tb2LM,Tb2HM,x1Top,y1Top,x2Top,y2Top,"Top",
+  Mat noTBG = cvA.remove_background(accTop,blankTop,TblurKM,TtLowM,TtHighM,Tb1LM,Tb1HM,Tb2LM,Tb2HM,255,55,2070,1655,"Top",
                                     ColorStandardization,BluePlantThresholdTop,BluePlantBlurTop,GreenPlantThresholdTop,GreenPlantBlurTop,MaskAlphaThresholdDarkTop,MaskAlphaThresholdLightTop,
                                     MaskBetaThresholdTop,DifferenceDilateKernelSizeTop,DifferenceErodeKernelSizeTop,PotDilateKernelSizeTop,PotErodeKernelSizeTop);
-  Mat noSBG = cvA.remove_background(rawSide,blankSide,SblurKM,StLowM,StHighM,Sb1LM,Sb1HM,Sb2LM,Sb2HM,x1Side,y1Side,x2Side,y2Side,"Side",
+  Mat noSBG = cvA.remove_background(accSide,blankSide,SblurKM,StLowM,StHighM,Sb1LM,Sb1HM,Sb2LM,Sb2HM,700,700,1780,1350,"Side",
                                     ColorStandardization,BluePlantThresholdSide,BluePlantBlurSide,GreenPlantThresholdSide,GreenPlantBlurSide,MaskAlphaThresholdDarkSide,MaskAlphaThresholdLightSide,
                                     MaskBetaThresholdSide,DifferenceDilateKernelSizeSide,DifferenceErodeKernelSizeSide,PotDilateKernelSizeSide,PotErodeKernelSizeSide);
 
-  qDebug() << "Finished Removal of BG";
-  std::vector<Point> ccFront = cvA.get_cc(noFBG,x1Front,y1Front,x2Front,y2Front);
-  std::vector<Point> ccTop = cvA.get_cc(noTBG,x1Top,y1Top,x2Top,y2Top);
-  std::vector<Point> ccSide = cvA.get_cc(noSBG,x1Side,y1Side,x2Side,y2Side);
+  imwrite("/Users/dnguyen/Desktop/noFBG.png",noFBG);
+  imwrite("/Users/dnguyen/Desktop/noTBG.png",noTBG);
+  imwrite("/Users/dnguyen/Desktop/noSBG.png",noSBG);
+
+
+  std::vector<Point> ccFront = cvA.get_cc(noFBG,363,309,2040,1463);
+  std::vector<Point> ccTop = cvA.get_cc(noTBG,255,55,2070,1655);
+  std::vector<Point> ccSide = cvA.get_cc(noSBG,700,700,1780,1350);
   qDebug() << "Finished Getting CC";
 
   shapesTop = cvA.get_shapes(ccTop,noTBG);
@@ -226,9 +257,9 @@ void listCapturePlant::on_capturePlant_clicked()
   shapesSide = cvA.get_shapes(ccSide,noSBG);
   qDebug() << "Finished Capturing of Shape Info";
 
-  Mat shapesImageTop = cvA.drawShapes(accTop,ccTop);
-  Mat shapesImageFront = cvA.drawShapes(accFront,ccFront);
-  Mat shapesImageSide = cvA.drawShapes(accSide,ccSide);
+  //Mat shapesImageTop = cvA.drawShapes(accTop,ccTop);
+  //Mat shapesImageFront = cvA.drawShapes(accFront,ccFront);
+  //Mat shapesImageSide = cvA.drawShapes(accSide,ccSide);
 
 
   HistogramImageTop = cvA.get_RGB_HIST(accTop,noTBG);
@@ -267,9 +298,9 @@ void listCapturePlant::on_capturePlant_clicked()
 
   //imwrite("/Users/dnguyen/Desktop/mask.png",noFBG);
 
-  emit sendShapeTop(shapesImageTop);
-  emit sendShapeFront(shapesImageFront);
-  emit sendShapeSide(shapesImageSide);
+  //emit sendShapeTop(shapesImageTop);
+  //emit sendShapeFront(shapesImageFront);
+  //emit sendShapeSide(shapesImageSide);
 
   emit sendMaskTop(noTBG);
   emit sendMaskFront(noFBG);
@@ -283,8 +314,6 @@ void listCapturePlant::on_capturePlant_clicked()
 
   instructions = "Click Accept if "+treatmentList[a]+" "+model[b]+" is Correct";
   ui->instructions->setText(instructions);
-
-
 
 }
 
@@ -310,9 +339,13 @@ void listCapturePlant::on_accept_clicked()
   if(!QDir(fileDir).exists()){
       QDir().mkdir(fileDir);
     }
-  QString fileDirP = ProjectDir+"/Data/Pictures/";
+  QString fileDirP = ProjectDir+"/Data/Plants/";
   if(!QDir(fileDirP).exists()){
       QDir().mkdir(fileDirP);
+    }
+  QString fileDirB = ProjectDir+"/Data/Blanks/";
+  if(!QDir(fileDirB).exists()){
+      QDir().mkdir(fileDirB);
     }
 
   QDateTime t = QDateTime::currentDateTime();
@@ -501,6 +534,18 @@ void listCapturePlant::on_accept_clicked()
   cv::imwrite(fileNameA,rawTop);
   cv::imwrite(fileNameB,rawFront);
   cv::imwrite(fileNameC,rawSide);
+
+  QString fileNameTa = fileDirB+treatmentList[a]+"_"+model[b]+"Top"+date1+".png";
+  QString fileNameFa = fileDirB+treatmentList[a]+"_"+model[b]+"Front"+date1+".png";
+  QString fileNameSa = fileDirB+treatmentList[a]+"_"+model[b]+"Side"+date1+".png";
+
+  std::string fileNameAa = fileNameTa.toUtf8().constData();
+  std::string fileNameBa = fileNameFa.toUtf8().constData();
+  std::string fileNameCa = fileNameSa.toUtf8().constData();
+
+  cv::imwrite(fileNameAa,blankTop);
+  cv::imwrite(fileNameBa,blankFront);
+  cv::imwrite(fileNameCa,blankSide);
 
   QTextCursor textCursor = ui->plainTextEdit->textCursor();
   textCursor.movePosition(QTextCursor::Start,QTextCursor::MoveAnchor,1);

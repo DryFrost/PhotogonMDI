@@ -89,7 +89,8 @@ SOURCES += \
     manualcomputervisionsubtraction.cpp \
     manualcomputervision.cpp \
     mytcp.cpp \
-    mytcpside.cpp
+    mytcpside.cpp \
+    mytcptop.cpp
 
 HEADERS += \
     mainwindow.h \
@@ -135,7 +136,8 @@ HEADERS += \
     manualcomputervisionsubtraction.h \
     manualcomputervision.h \
     mytcp.h \
-    mytcpside.h
+    mytcpside.h \
+    mytcptop.h
 
 FORMS += \
     mainwindow.ui \

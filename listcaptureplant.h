@@ -12,7 +12,7 @@
 #include <QSettings>
 #include <QtCore>
 #include <computervision.h>
-
+#include <myudp.h>
 
 namespace Ui {
   class listCapturePlant;
@@ -210,6 +210,7 @@ private:
   Mat TopcolorValue;
 
   int a,b;
+  MyUDP* udpCP;
 };
 
 #endif // LISTCAPTUREPLANT_H

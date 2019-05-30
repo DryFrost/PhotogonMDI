@@ -31,7 +31,6 @@ void MyTCPSide::acceptConnection1()
 }
 cv::Mat MyTCPSide::getImage(){
 
-
   return Img;
 }
 
@@ -64,9 +63,10 @@ void MyTCPSide::timeIsOver(){
   //bool Sat = true;
   //emit finishedF(Sat);
   Img = QImage2MatSide(myImage);
-    imwrite("/Users/dnguyen/desktop/LookMomICanDoItFromTheSide.png",Img);
-  pStatusBar->showMessage("Image Side Recieved");
-  //qDebug() << "Image Side Got";
+  //ThisIsTop
+  imwrite("/Users/dnguyen/desktop/CapTop.png",Img);
+  pStatusBar->showMessage("Image Top Recieved");
+  qDebug() << "Image Top Got";
   StartRead = false;
   client->close();
 }
@@ -82,5 +82,5 @@ void MyTCPSide::startRead(){
       ba = client->readAll();
       bufferAll.append(ba);
     }
-  qDebug() << "Total Side: " << bufferAll.size();
+  qDebug() << "Total Top: " << bufferAll.size();
 }
